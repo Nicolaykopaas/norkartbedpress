@@ -1,12 +1,14 @@
-# Plan: Pilsrunden Trondheim (Oppgave 5 og 6)
+# Plan: Pubgolf Trondheim (Oppgave 5 og 6)
 
-Fork av [Norkart/norkart-webkurs-React](https://github.com/Norkart/norkart-webkurs-React). Upstream er sjekket på commit `15ef546` («Allow any»).
+Fork av [Norkart/norkart-webkurs-React](https://github.com/Norkart/norkart-webkurs-React). Upstream er sjekket på commit `15ef546` («Allow any»). Planen er ikke kodet ennå.
 
-**Mål**
-1. **Oppgave 6 (egne åpne geodata):** vise steder som selger pils, og hva pilsen koster. Data kommer fra [pilsguiden.no/liste/trondelag/trondheim](https://www.pilsguiden.no/liste/trondelag/trondheim).
-2. **Oppgave 5 (rute):** vise en bar-til-bar-rute («pilsrunde») der hvert stopp er billigere enn det forrige, fra dyr til billig pils.
+## Idé
+Et kart over pubgolf i Trondheim:
+1. **Oppgave 6 (egne åpne geodata):** kartet viser alle stedene som selger pils, med pris. Dataene kommer fra [pilsguiden.no/liste/trondelag/trondheim](https://www.pilsguiden.no/liste/trondelag/trondheim).
+2. **Oppgave 5 (rute):** appen setter opp en pubgolfbane med 9 hull (eller 6). Hvert hull er en bar. Rekkefølgen går fra dyr til billigere pils, og ruten tegnes bar til bar med Norkarts ruteberegner.
+3. **Pubgolf:** hvert hull har en drink og en **par**, som er anbefalt antall slurker. Et scorekort registrerer slurker per spiller og regner ut score mot par og hva runden koster. Bonus for **«Split the G»** på Guinness-hull.
 
-Andre oppgaver (1–4) og ekstrafunksjoner som slider, topp 5 og koroplett er ikke med.
+Oppgave 1–4, slider, topp 5 og koroplett er ikke med.
 
 ---
 
@@ -15,129 +17,167 @@ Andre oppgaver (1–4) og ekstrafunksjoner som slider, topp 5 og koroplett er ik
 | Krav eller antakelse | Funnet i upstream | Konsekvens |
 |---|---|---|
 | Fork, `.env` med `VITE_API_KEY`, `.env` skal aldri committes | README krever dette, og `.gitignore` inneholder `.env` | Steg 0. Legg til `.env.example` uten verdi. |
-| `getRuteMellomPunkter.ts` | En stub med ferdig `postData`. URL: `POST https://ruteberegner.api.norkart.no/Route/Expanded`. `SrsId: 4326`, `GraphName: 'ta-norden-dynamic'`, `CostFunction: 'time'`, **`ViaPoints: []`**. Svaret har `RouteGeometry` (GeoJSON MultiLineString) og `CostList`. | Implementer fetch-kallet som i `getHoydeFromPunkt` (header `X-WAAPI-TOKEN`). **`ViaPoints` gjør at hele runden kan hentes i ett kall.** |
-| Grafen er en **kjøre**graf (`FeatureSnapRestriction: ['Road','Motorway']`) | README kaller det «kjørerute» | En pilsrunde bør gå til fots. Sjekk om det finnes en gange-graf (se steg 3a). Hvis ikke brukes kjøreruten, og UI-et kaller det «rute» og ikke «gåtid». |
-| Oppgave 5 bygger på to klikk (`startPunkt` → `rute`) | Mønster i README med `RSource` og `RLayer type="line"` | Behold mønsteret, men la startpunktet være en bar man klikker på i stedet for et fritt punkt. |
-| Ekstraoppgave: vis `CostList` | Står i README | Vis total tid og antall stopp i et MUI Card. |
-| `RPopup`, `RSource`, `RLayer`, `useMap` | Eksporteres av `maplibre-react-components` | Ingen nye kartavhengigheter trengs. |
-| `onMapClick` kaller `getHoydeFromPunkt` (Oppgave 1) | Står i `MapLibreMap.tsx` | Fjern eller erstatt dette. Kartklikk brukes nå til å velge bar. |
-| Oppgave 6: «Visualiser din egen data — lag GeoJSON» | Står i README | `olpriser.json` gjort om til GeoJSON oppfyller dette. |
+| `getRuteMellomPunkter.ts` | En stub med ferdig `postData`. URL: `POST https://ruteberegner.api.norkart.no/Route/Expanded`. `SrsId: 4326`, `GraphName: 'ta-norden-dynamic'`, `CostFunction: 'time'`, **`ViaPoints: []`**. Svaret har `RouteGeometry` (GeoJSON MultiLineString) og `CostList`. | Implementer fetch-kallet som i `getHoydeFromPunkt` (header `X-WAAPI-TOKEN`). `ViaPoints` gjør at hele banen kan hentes i ett kall. |
+| Grafen er en **kjøre**graf (`FeatureSnapRestriction: ['Road','Motorway']`) | README kaller det «kjørerute» | Pubgolf går til fots. Sjekk om det finnes en gange-graf (steg 3a). Hvis ikke brukes kjøreruten, og UI-et kaller det «rute» og ikke «gåtid». |
+| Oppgave 5-mønster: to klikk → `rute` → `RLayer type="line"` | Står i README | Følg samme mønster. Startbaren velges med klikk. |
+| Ekstraoppgave: vis `CostList` | Står i README | Vis total rutetid i scorekortet. |
+| `RPopup`, `RSource`, `RLayer`, `useMap` | Eksporteres av `maplibre-react-components` | Ingen nye kartavhengigheter. |
+| MUI | `@mui/material` 7 er installert. `@mui/icons-material` er ikke installert. | Scorekortet bygges med MUI `Table`, `Card` og `Chip`. Ikoner lages med emoji, uten nye avhengigheter. |
+| `onMapClick` kaller `getHoydeFromPunkt` (Oppgave 1) | Står i `MapLibreMap.tsx` | Erstatt dette. Kartklikk brukes nå til å velge bar. |
+| Oppgave 6: «Visualiser din egen data — lag GeoJSON» | Står i README | `olpriser.json` som GeoJSON oppfyller dette. |
 | Tester og CI | Ingen testskript. Bygg og lint er grønne, med 0 feil og 12 advarsler. | Sjekk med `npm run build`, `npm run lint` og manuell test i `npm run dev`. |
 
 **Åpne blokkeringer**
-- `www.pilsguiden.no` (og sannsynligvis Nominatim) er blokkert av nettverkspolicyen i skymiljøet. HTML-strukturen og om stedene har adresse er derfor **ikke kartlagt**. Rekognoseringen (steg 1a) må kjøres lokalt eller etter at domenet er åpnet.
-- Ruteberegner-API-et er ikke testet herfra fordi API-nøkkelen mangler. Det gjelder både svarformatet og om `ViaPoints` og en gange-graf fungerer. Dette avklares i steg 3a.
+- `www.pilsguiden.no` og sannsynligvis Nominatim er blokkert av nettverkspolicyen i skymiljøet. Strukturen på Pilsguiden er **ikke kartlagt**. Steg 1a må kjøres lokalt eller etter at domenet er åpnet.
+- Ruteberegneren er ikke testet, fordi API-nøkkelen mangler. `ViaPoints` og om det finnes en gange-graf avklares i steg 3a.
+- **Pilsguiden sier ikke hvilke barer som har Guinness.** Dette må legges inn manuelt (se 1c).
 
 ---
 
 ## Steg 0: Oppsett
-- `git remote add upstream …`, `git fetch`, deretter `git merge upstream/main --allow-unrelated-histories`.
-- Kjør `npm ci`.
-- Opprett `.env` lokalt og sjekk at `git status` ikke viser den.
+- `git remote add upstream …`
+- `git fetch`
+- `git merge upstream/main --allow-unrelated-histories`
+- `npm ci`
+- Lag `.env` lokalt og sjekk at `git status` ikke viser den.
 - Commit `.env.example`.
-- Kjør baseline med `npm run build` og `npm run lint`.
+- Kjør `npm run build` og `npm run lint` som utgangspunkt.
 
-## Steg 1: Data til Oppgave 6 (`scripts/scrape.ts`, kjøres én gang)
-**1a. Rekognosering.** Krever nettilgang.
+## Steg 1: Data (`scripts/scrape.ts`, kjøres én gang)
+**1a. Rekognosering** (trenger nettilgang)
 - Er lista HTML eller JSON?
 - Finn selektorer for navn, pris (0,5 l), happy hour og bydel.
-- Undersøk om stedssidene har adresse eller koordinater.
-- Les `robots.txt` og vilkårene for bruk.
+- Sjekk om stedssidene har adresse eller koordinater.
+- Les `robots.txt` og vilkårene.
 
 **1b. Skript**
-- Installer med `npm i -D tsx` og kjør med `tsx --env-file=.env scripts/scrape.ts`.
-- Rate-limit på 1 forespørsel/s og en egen User-Agent.
+- Installer med `npm i -D tsx`. Kjør med `tsx --env-file=.env scripts/scrape.ts`.
+- Maks 1 forespørsel/s og en egen User-Agent.
 - Geokoding, i denne rekkefølgen:
-  1. Koordinater fra pilsguiden.
-  2. Adresse → Norkart fritekstsøk. Skriptet kaller samme URL som `getAdresserFromSearchText`, men med `process.env`, siden `import.meta.env` ikke finnes i Node.
+  1. Koordinater fra Pilsguiden.
+  2. Adresse → Norkart fritekstsøk. Skriptet kaller samme URL som `getAdresserFromSearchText`, men bruker `process.env`.
   3. Nominatim med «navn, Trondheim».
-  4. Manuelle rettelser i `scripts/overrides.json`.
-- Skriptet varsler om punkter som havner utenfor bbox for Trondheim.
+  4. `scripts/overrides.json`.
+- Varsle om punkter som havner utenfor bbox for Trondheim.
 
 **1c. Resultat**
-- Skriv til `src/sample_data/olpriser.json` som en GeoJSON `FeatureCollection<Point>` med properties `{id, navn, pris, happyHour, bydel}`.
-- Legg typer i `src/types/ol.ts`.
-- Vis kildekreditering til Pilsguiden, med dato, i UI.
+- `src/sample_data/olpriser.json` er en GeoJSON `FeatureCollection<Point>` med properties `{id, navn, pris, happyHour, bydel, guinness?}`.
+- `guinness: true` settes manuelt i `scripts/overrides.json`. Uten flagg kan man likevel markere et hull som Guinness-hull i oppsettet (steg 4a).
+- Typer ligger i `src/types/ol.ts`.
+- UI viser kildekreditering til Pilsguiden med dato.
 
-## Steg 2: Vise pilssteder (Oppgave 6, i appen)
-- Lag `src/components/PilsLayer.tsx` med `RSource` (geojson) og `RLayer type="circle"`:
-  - `circle-color`: `interpolate` på `pris`, fra grønn (billig) via gul til rød (dyr).
-  - `circle-radius`: `interpolate` på `pris`.
-  - min og maks beregnes fra dataene i `src/utils/pris.ts`.
-- `RLayer type="symbol"` viser prisen som tekst («89,-») når zoom er 14 eller mer.
-- Klikk på et punkt åpner `RPopup` med navn, pris og ⏰ happy hour. Popupen har knappen **«Start pilsrunde herfra»**.
-- En enkel legend viser fargeskalaen i `Overlay`.
+## Steg 2: Kart over pilssteder (Oppgave 6)
+- `src/components/PilsLayer.tsx`:
+  - `RSource` (geojson) og `RLayer type="circle"`.
+  - `circle-color` er en `interpolate` på `pris`: grønn (billig) → gul → rød (dyr).
+  - `circle-radius` følger prisen.
+  - Guinness-steder får en mørk ring (`circle-stroke-color`).
+- `RLayer type="symbol"` viser prisen som tekst («89,-») ved zoom ≥ 14.
+- Klikk åpner en `RPopup` med:
+  - navn, pris og ⏰ happy hour
+  - 🍀 Guinness hvis stedet har det
+  - knappen **«Start pubgolf herfra»**
+- `PrisLegend` viser fargeskalaen.
 
-## Steg 3: Pilsrunden (Oppgave 5)
-**3a. Avklar API-et først.** Dette er et spike på én gang, uten å endre koden i appen.
+## Steg 3: Banen (Oppgave 5)
+**3a. API-spike** (én gang, før appkoden)
 - Implementer fetch-kallet i `getRuteMellomPunkter` og logg svaret.
-- Undersøk om `ViaPoints` gir én samlet `RouteGeometry`, og hvordan `CostList` ser ut, med totalsum eller per etappe.
-- Undersøk om det finnes en gange-graf eller gangfunksjon (spør kursholder, eller prøv `GraphName`/`FeatureSnapRestriction`).
-- Utvid signaturen på en bakoverkompatibel måte: `getRuteMellomPunkter(startX, startY, stoppX, stoppY, via: [number, number][] = [])`. Da fungerer README-eksempelet fortsatt.
+- Sjekk om `ViaPoints` gir én geometri, og hvordan `CostList` ser ut per etappe.
+- Sjekk om det finnes en gange-graf.
+- Utvid signaturen bakoverkompatibelt:
 
-**3b. Algoritme** (en ren funksjon i `src/utils/pilsrunde.ts`, uten kart- eller API-avhengighet)
-- Input:
-  - startbar
-  - alle barer
-  - `maksStopp` (standard 5)
-  - `maksAvstandMeter` per etappe (standard 800 m)
-- Grådig valg: neste stopp er den **nærmeste** baren med **lavere pris** enn nåværende og innenfor `maksAvstandMeter` (haversine). Ved lik avstand velges laveste pris.
-- Stopp når `maksStopp` er nådd, eller når det ikke finnes billigere barer i nærheten.
-- Output: en ordnet liste med barer. Prisen synker strengt fra stopp til stopp.
-- Alternativ modus «Fra dyreste»: startbaren er den dyreste i Midtbyen eller i synlig område. Ellers er algoritmen den samme.
+  ```ts
+  getRuteMellomPunkter(startX, startY, stoppX, stoppY, via: [number, number][] = [])
+  ```
 
-**3c. Rute og visning**
-- Én ruteforespørsel: Start = første bar, Stop = siste bar, `ViaPoints` = barene imellom.
-  - Fallback hvis `ViaPoints` ikke fungerer: N−1 kall med `Promise.all`, og geometriene slås sammen til én FeatureCollection.
-- Tegn ruten med `RSource id="rute"` og `RLayer type="line"`. Ekstra (om fallback): farge per etappe ut fra prisen ved start av etappen (`line-gradient` eller én feature per etappe).
-- Nummererte markører for stoppene 1..N (symbol-lag).
-- MUI Card «Pilsrunde»:
-  - En liste med stoppene og prisen på hvert, for eksempel 1. X – 119,- → 2. Y – 99,-.
-  - Total rutetid fra `CostList` (ekstraoppgaven i Oppgave 5).
-  - Hvor mye man sparer per pils fra første til siste stopp.
-  - Knapp: «Nullstill».
-- Behold det opprinnelige to-klikk-mønsteret fra README som reserve. Hvis man klikker i kartet utenfor en bar, går ruten fra dette startpunktet til nærmeste billigere bar.
+**3b. Banealgoritme** (`src/utils/bane.ts`, en ren funksjon)
+- Input: `startbar`, `barer`, `antallHull` (9 som standard, eller 6) og `maksAvstandMeter` per etappe (800 m som standard).
+- Neste hull er den **nærmeste** baren som er **billigere enn eller like billig som** den forrige, innenfor maksavstanden, og som ikke allerede er brukt. Prisen synker da (ikke nødvendigvis strengt), fra dyr til billig.
+- Finnes ingen slik bar, øker radiusen trinnvis til 1500 m. Ellers slutter banen tidlig, og UI-et sier fra.
+- Valgfritt: plasser minst ett Guinness-sted på banen hvis det finnes et innenfor rekkevidde.
+- Output er en ordnet liste med hull `{nr, bar}`.
+
+**3c. Rute på kartet**
+- Ett kall: `Start` = hull 1, `Stop` = siste hull, `ViaPoints` = hullene imellom.
+- Hvis `ViaPoints` ikke fungerer, brukes N−1 kall med `Promise.all`.
+- Kartlag:
+  - `RLayer type="line"` for ruten.
+  - Nummererte hull-markører (1–9) som `symbol`-lag med flagg-emoji ⛳.
+  - Aktivt hull er uthevet.
+
+## Steg 4: Pubgolf
+**4a. Par per hull** (`src/utils/par.ts`, konfigurerbar tabell)
+
+| Drink | Standard par (slurker) | Merknad |
+|---|---|---|
+| Pils 0,5 l | 4 | Standard for alle hull |
+| Guinness 0,5 l | 5 | «Split the G»-bonus er mulig |
+| Cider / seltzer | 3 | |
+| Shot | 1 | Maks ett shot-hull per bane |
+| Alkoholfritt | 4 | Kan velges på alle hull, og teller likt |
+
+- Standardbanen er pils på alle hull. Guinness-steder foreslår Guinness. I oppsettet kan man endre drink og par per hull (MUI `Select` og `TextField type=number`).
+- Par for banen er summen av par per hull, typisk rundt 36 for 9 hull.
+
+**4b. Scorekort** (`src/components/Scorekort.tsx`, MUI `Card` og `Table`)
+- Spillere: legg til og fjern navn.
+- Hver rad er ett hull: hull, bar, drink, pris, par og slurker per spiller (stepper −/+).
+- Score per hull er slurker − par. Visningen er golf-stil: birdie (−1), eagle (−2), bogey (+1), og så videre, med farge-`Chip`.
+- **Bonus for «Split the G»:** på Guinness-hull har hver spiller en avkrysning «Split the G ✔». Det gir **−1 slag** (konfigurerbart). Bonusen vises separat i summen.
+- Totalen viser slag, totalt mot par, bonus og netto for hver spiller. Leder har 🏆.
+- Kostnad: sum av prisene på banen per spiller («Runden koster 812 kr»), og total rutetid fra `CostList` (ekstraoppgaven i Oppgave 5).
+- Tilstanden lagres i `localStorage` med try/catch, slik at runden overlever en reload. Knappen «Ny runde» nullstiller.
+- En kort linje om å drikke ansvarlig og ta med vann. Alkoholfritt er et likeverdig valg.
+
+**4c. Kobling mellom kart og scorekort**
+- Klikk på et hull i scorekortet får kartet til å fly dit og åpner popupen.
+- Popupen på et hull på banen viser «Hull 3 · Par 4 · 99,-».
 
 ## Filer som berøres
-- **Nye:**
-  - `scripts/scrape.ts`
-  - `scripts/overrides.json`
-  - `src/sample_data/olpriser.json`
-  - `src/types/ol.ts`
-  - `src/utils/pris.ts`
-  - `src/utils/pilsrunde.ts`
-  - `src/components/PilsLayer.tsx`
-  - `src/components/PilsrundeCard.tsx`
-  - `src/components/PrisLegend.tsx`
-  - `.env.example`
-- **Endres (minimalt):**
-  - `src/api/getRuteMellomPunkter.ts`
-  - `src/components/MapLibreMap.tsx`
-  - `package.json` (`tsx` og scriptet `scrape`)
-- Ingenting annet røres.
+**Nye filer**
+- `scripts/scrape.ts`, `scripts/overrides.json`
+- `src/sample_data/olpriser.json`
+- `src/types/ol.ts`
+- `src/utils/pris.ts`, `src/utils/bane.ts`, `src/utils/par.ts`
+- `src/components/PilsLayer.tsx`, `src/components/PrisLegend.tsx`, `src/components/BaneLayer.tsx`, `src/components/Scorekort.tsx`
+- `.env.example`
+
+**Endres minimalt**
+- `src/api/getRuteMellomPunkter.ts`
+- `src/components/MapLibreMap.tsx`
+- `package.json` (`tsx` og scriptet `scrape`)
+
+Ingenting annet røres.
 
 ## Commits (små, én per punkt)
 1. Upstream-oppsett og `.env.example`
 2. Skrapeskript
-3. Data (`olpriser.json`)
+3. Data
 4. Pilslag og popup
 5. Legend og kreditering
 6. `getRuteMellomPunkter`
-7. `pilsrunde.ts`
-8. Rute og markører
-9. PilsrundeCard
+7. `bane.ts`
+8. Banelag med hull-markører
+9. `par.ts`
+10. Scorekort
+11. Split the G-bonus
+12. Kobling mellom kart og scorekort
 
-Før hver push må `npm run build` og `npm run lint` passere, og `.env` må ikke være staget.
+Før hver push: `npm run build` og `npm run lint` må være grønne, og `.env` skal ikke være staget.
 
 ## Akseptsjekk
-- [ ] Repoet er en fork. `.env` finnes ikke i historikken, og `git log --all -- .env` er tom.
-- [ ] `npm run build` er grønn. `npm run lint` gir 0 feil og ≤ 12 advarsler.
-- [ ] **Oppgave 6:** alle pilssteder vises med farge og størrelse etter pris, og popupen viser navn, pris og happy hour. Pilsguiden er kreditert.
-- [ ] **Oppgave 5:** `getRuteMellomPunkter` er implementert, og ruten tegnes som et `line`-lag.
-- [ ] **Pilsrunde:** fra en valgt bar vises en rute med 2–5 stopp der prisen synker strengt, med nummererte stopp.
-- [ ] **Ekstraoppgave 5:** reisetiden fra `CostList` vises i et Card.
+- [ ] Repoet er en fork, og `git log --all -- .env` er tom.
+- [ ] `npm run build` er grønn, og `npm run lint` gir 0 feil og ≤ 12 advarsler.
+- [ ] **Oppgave 6:** alle pilssteder vises med farge og størrelse etter pris. Popupen viser navn, pris, happy hour og Guinness. Pilsguiden er kreditert.
+- [ ] **Oppgave 5:** `getRuteMellomPunkter` er implementert, og ruten tegnes som et `line`-lag. Reisetiden fra `CostList` vises.
+- [ ] **Bane:** fra en valgt bar lages 6–9 hull der prisen synker, med nummererte hull på kartet.
+- [ ] **Pubgolf:** par per hull kan endres. Scorekortet teller slurker per spiller og viser score mot par, birdie og bogey, og hva runden koster.
+- [ ] **Split the G:** avkrysningen på Guinness-hull gir bonusen, og totalen viser den.
+- [ ] Runden overlever en reload (`localStorage`).
 
-## Beslutninger du bør ta før koding
-1. Gange eller kjøring? Hvis det ikke finnes en gange-graf, godtar vi kjøreruten?
-2. Standardverdier for `maksStopp` (5) og `maksAvstandMeter` (800 m)?
-3. Skal startpunktet være en bar brukeren klikker på (standard) eller alltid den dyreste?
+## Beslutninger før koding
+1. 9 eller 6 hull som standard?
+2. Par-tabellen: er pils = 4 og Guinness = 5 riktig for dere?
+3. Split the G-bonus: −1 slag, eller mer?
+4. Gange eller kjøring? Hvis det ikke finnes en gange-graf, godtar vi kjøreruten?
+5. Hvilke barer har Guinness? Legg dem inn manuelt, eller la brukeren markere hullet selv?
