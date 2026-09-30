@@ -259,46 +259,6 @@ body {
   }
 }
 
-/* Annonse / special event */
-.event-ad {
-  position: absolute;
-  top: 64px;
-  right: 12px;
-  z-index: 3;
-  width: 220px;
-  padding: 12px;
-  border-radius: 16px;
-  color: #fff;
-  background: linear-gradient(135deg, #7b2ff7, #ff2bd6);
-  box-shadow: 0 0 22px #ff2bd6;
-  animation: event-inn 0.5s ease-out both;
-}
-.event-tittel {
-  font-weight: 900;
-  font-size: 18px;
-}
-.event-meter {
-  font-weight: 800;
-  margin: 6px 0;
-}
-@keyframes event-inn {
-  0% {
-    transform: translateY(-30px) scale(0.8);
-    opacity: 0;
-  }
-  100% {
-    transform: none;
-    opacity: 1;
-  }
-}
-.event-bilde {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 8px;
-}
-
 /* Livlige animasjoner */
 .swipe-kort {
   animation: kort-inn 0.3s ease-out;
@@ -334,4 +294,205 @@ button:active {
 }
 .start-kort {
   animation: panel-opp 0.5s ease-out both;
+}
+
+/* Gående figurer */
+.gaa {
+  font-size: 34px;
+  filter: drop-shadow(0 0 6px #00e5ff);
+  animation: vrikk 0.5s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.gaa.gjeng {
+  font-size: 26px;
+  letter-spacing: -4px;
+}
+@keyframes vrikk {
+  0% { transform: translateY(0) rotate(-6deg); }
+  100% { transform: translateY(-5px) rotate(6deg); }
+}
+
+/* Reveal */
+.reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 3500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 0, 15, 0.85);
+  animation: reveal-bg 0.3s both, strobe 0.25s steps(1) 6,
+    flash 0.5s ease-out 1.6s both;
+}
+.reveal-kort {
+  width: min(94vw, 440px);
+  text-align: center;
+  color: #fff;
+  background: #150b2e;
+  border: 2px solid #ff2bd6;
+  border-radius: 22px;
+  padding: 14px;
+  box-shadow: 0 0 40px #ff2bd6;
+  animation: reveal-flip 0.7s cubic-bezier(0.2, 1.3, 0.4, 1) 1.6s both,
+    reveal-skjelv 1.6s linear both;
+}
+.reveal-kort img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  max-height: 52dvh;
+  animation: silhuett 1.6s steps(1) both;
+  object-fit: cover;
+  border-radius: 16px;
+}
+.reveal-topp {
+  font-size: 22px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  animation: blink 1s steps(2) infinite;
+}
+.reveal-navn {
+  font-size: 40px;
+  animation: pop-tekst 0.5s 1.9s both;
+  font-size: 40px;
+  font-weight: 900;
+  margin-top: 8px;
+}
+.reveal-drink {
+  font-size: 18px;
+}
+.reveal-trykk {
+  margin-top: 8px;
+  font-size: 13px;
+  opacity: 0.8;
+}
+@keyframes reveal-flip {
+  0% { transform: perspective(700px) rotateY(90deg) scale(0.6); opacity: 0; }
+  100% { transform: none; opacity: 1; }
+}
+@keyframes reveal-bg {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+@keyframes blink {
+  50% { opacity: 0.3; }
+}
+
+/* Special event i GTA-stil: oppdragsbanner og telefonsamtale */
+.gta {
+  position: fixed;
+  inset: 0;
+  z-index: 3200;
+  pointer-events: none;
+}
+.gta-banner {
+  position: absolute;
+  top: 18%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  font-family: Impact, 'Arial Black', sans-serif;
+  font-style: italic;
+  font-size: 44px;
+  line-height: 1;
+  color: #f5c518;
+  text-transform: uppercase;
+  text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000,
+    -2px 2px 0 #000;
+  animation: gta-banner 4s ease-out both;
+}
+.gta-banner small {
+  display: block;
+  margin-top: 6px;
+  font-size: 20px;
+  color: #fff;
+}
+.gta-samtale {
+  position: absolute;
+  left: 10px;
+  bottom: calc(46% + 10px);
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  pointer-events: auto;
+  animation: gta-samtale 0.45s ease-out both;
+}
+.gta-samtale img {
+  width: 76px;
+  height: 76px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 3px #000;
+}
+.gta-tekst {
+  max-width: 230px;
+  padding: 8px 10px;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.78);
+  border-left: 4px solid #f5c518;
+  font-size: 14px;
+  line-height: 1.25;
+}
+.gta-tekst b {
+  display: block;
+  color: #f5c518;
+  font-size: 13px;
+  text-transform: uppercase;
+}
+.gta-tekst button {
+  margin-top: 6px;
+  padding: 4px 10px;
+  border: 0;
+  background: #f5c518;
+  color: #000;
+  font-weight: 900;
+  cursor: pointer;
+}
+@keyframes gta-banner {
+  0% { transform: scale(2.4); opacity: 0; }
+  10% { transform: scale(1); opacity: 1; }
+  80% { opacity: 1; }
+  100% { transform: translateY(-20px); opacity: 0; }
+}
+@keyframes gta-samtale {
+  0% { transform: translateX(-120%); }
+  100% { transform: none; }
+}
+
+/* Spenning: sort silhuett, skjelving og strobe, så avsløring med blits */
+@keyframes silhuett {
+  0% { filter: brightness(0); }
+  100% { filter: brightness(0); }
+}
+.reveal-kort img {
+  animation: silhuett 1.6s steps(1) both, avslor 0.4s 1.6s both;
+}
+@keyframes avslor {
+  0% { filter: brightness(6) saturate(0); transform: scale(1.15); }
+  100% { filter: none; transform: none; }
+}
+@keyframes reveal-skjelv {
+  0% { transform: translate(0, 0) scale(0.7); }
+  10% { transform: translate(-6px, 4px) scale(0.75); }
+  20% { transform: translate(6px, -4px) scale(0.78); }
+  30% { transform: translate(-8px, 2px) scale(0.8); }
+  40% { transform: translate(8px, -3px) scale(0.82); }
+  50% { transform: translate(-10px, 5px) scale(0.84); }
+  60% { transform: translate(10px, -5px) scale(0.86); }
+  70% { transform: translate(-12px, 3px) scale(0.88); }
+  80% { transform: translate(12px, -3px) scale(0.9); }
+  100% { transform: translate(0, 0) scale(0.92); }
+}
+@keyframes strobe {
+  0% { background: rgba(255, 43, 214, 0.55); }
+  50% { background: rgba(0, 229, 255, 0.45); }
+}
+@keyframes flash {
+  0% { background: #fff; }
+  100% { background: rgba(5, 0, 15, 0.85); }
+}
+@keyframes pop-tekst {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.25); }
+  100% { transform: scale(1); }
 }

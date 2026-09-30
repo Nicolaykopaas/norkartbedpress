@@ -5,7 +5,7 @@ export type SpecialEvent = {
   tekst: string;
   lng: number;
   lat: number;
-  /** Profilbilde i public/drinks/ (vises hvis fila finnes) */
+  /** Profilbilde i public/ (vises hvis fila finnes) */
   bilde?: string;
   profil?: string;
 };
@@ -19,8 +19,8 @@ export const EVENTER: SpecialEvent[] = [
     tekst: 'Vodka-vinar: shot-deal i kveld. Kom innom!',
     lng: 10.3962,
     lat: 63.4297,
-    bilde: 'vodka.png',
-    profil: 'Vodka-Vegard, 26',
+    bilde: 'events/vodka-vinar.png',
+    profil: 'Shot-Stian, 27',
   },
   {
     id: 'bakklandet-quiz',

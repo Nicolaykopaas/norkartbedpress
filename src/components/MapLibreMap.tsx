@@ -1,16 +1,22 @@
-import {
-  type MapLayerMouseEvent,
-  type RequestTransformFunction,
-} from 'maplibre-gl';
+import { type RequestTransformFunction } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { RMap, RPopup, useMap } from 'maplibre-react-components';
+import {
+  RLayer,
+  RMap,
+  RPopup,
+  RSource,
+  useMap,
+} from 'maplibre-react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { FeatureCollection } from 'geojson';
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { Overlay } from './Overlay';
 import { PrisLegend } from './PilsLayer';
-import { BarMarkers } from './BarMarkers';
 import { EVENTER } from '../data/events';
+import { GaaMarker, IntroGange } from './Gaa';
+import { hentGangLinje, type Punkt } from '../utils/gange';
+import { PersonKort, Reveal } from './HullPerson';
+import { PROFILER } from '../data/profiler';
 import { BaneLayer } from './BaneLayer';
 import { DrinkSwipe } from './DrinkSwipe';
 import { Spillere } from './Spillere';
@@ -41,9 +47,13 @@ const NORKART_BASEMAP_VARIANT: NorkartBasemapVariant = 'hybrid';
 
 const NORKART_BASEMAP_STYLE = `${KVP_BASE_URL}norkart-basemap/${NORKART_BASEMAP_VARIANT}/style.json`;
 
-const ANTALL_HULL = 9;
+// Man sveiper til man har 7 matcher, og hver match blir ett hull
+const ANTALL_HULL = 7;
 const OPPSETT_KEY = 'pubgolf-oppsett-v1';
 const ALLE_BARER = olpriser as BarCollection;
+const SAMFUNDET: Punkt = (ALLE_BARER.features.find((b) =>
+  b.properties.navn.includes('Studentersamfundet')
+)?.geometry.coordinates as Punkt | undefined) ?? [10.3955, 63.4225];
 // Vi holder oss til Midtbyen (rundt Torvet) og Studentersamfundet
 const BARER: BarCollection = {
   ...ALLE_BARER,
@@ -144,6 +154,8 @@ export const MapLibreMap = () => {
   const nyRunde = () => {
     spill.nullstill();
     setRute(undefined);
+    setIntro('ferdig');
+    setLeg(undefined);
     setOppsett({ fase: 'swipe', drinks: [] });
   };
 
@@ -163,19 +175,56 @@ export const MapLibreMap = () => {
   const kunTinder = oppsett.fase === 'swipe' || oppsett.fase === 'match';
 
   const [lukkedeEventer, setLukkedeEventer] = useState<string[]>([]);
-  const naerEvent = aktivBar
-    ? EVENTER.map((e) => ({
-        e,
-        m: Math.round(
-          haversineMeter(
-            [e.lng, e.lat],
-            aktivBar.geometry.coordinates as [number, number]
-          )
-        ),
-      }))
-        .filter((x) => x.m <= 500 && !lukkedeEventer.includes(x.e.id))
-        .sort((a, b) => a.m - b.m)[0]
-    : undefined;
+  // Gåanimasjon fra Samfundet etter at man har trykket play
+  const [intro, setIntro] = useState<'gaar' | 'ferdig'>('ferdig');
+  const [revealHull, setRevealHull] = useState<number>();
+  // Special event dukker opp litt ut i runden, ikke med en gang
+  const [eventKlar, setEventKlar] = useState(false);
+  const aktivtHullNr = spill.aktivtHull;
+  useEffect(() => {
+    setEventKlar(false);
+    if (oppsett.fase !== 'spill' || intro !== 'ferdig' || aktivtHullNr < 2)
+      return;
+    const t = setTimeout(() => setEventKlar(true), 4000);
+    return () => clearTimeout(t);
+  }, [aktivtHullNr, oppsett.fase, intro]);
+  useEffect(() => {
+    if (oppsett.fase === 'spill' && intro === 'ferdig')
+      setRevealHull(aktivtHullNr);
+    else setRevealHull(undefined);
+  }, [aktivtHullNr, oppsett.fase, intro]);
+  // Kun etappen til neste bar tegnes, ikke hele ruten på en gang
+  const [leg, setLeg] = useState<Punkt[]>();
+  useEffect(() => {
+    setLeg(undefined);
+    if (oppsett.fase !== 'spill' || intro !== 'ferdig' || aktivtHullNr < 1)
+      return;
+    let avbrutt = false;
+    hentGangLinje(
+      hull[aktivtHullNr - 1].bar.geometry.coordinates as Punkt,
+      hull[aktivtHullNr].bar.geometry.coordinates as Punkt
+    ).then((l) => {
+      if (!avbrutt) setLeg(l);
+    });
+    return () => {
+      avbrutt = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [aktivtHullNr, oppsett.fase, intro, hull.length]);
+  const naerEvent =
+    aktivBar && eventKlar
+      ? EVENTER.map((e) => ({
+          e,
+          m: Math.round(
+            haversineMeter(
+              [e.lng, e.lat],
+              aktivBar.geometry.coordinates as [number, number]
+            )
+          ),
+        }))
+          .filter((x) => x.m <= 500 && !lukkedeEventer.includes(x.e.id))
+          .sort((a, b) => a.m - b.m)[0]
+      : undefined;
 
   const panel = (() => {
     if (spill.ferdig && hull.length > 0) {
@@ -218,7 +267,8 @@ export const MapLibreMap = () => {
               onFjern={spill.fjernSpiller}
               onStart={() => {
                 setOppsett((o) => ({ ...o, fase: 'spill' }));
-                visHull(0);
+                spill.settHull(0);
+                setIntro('gaar');
               }}
             />
             <Button
@@ -231,6 +281,23 @@ export const MapLibreMap = () => {
           </Stack>
         );
       case 'spill':
+        if (intro === 'gaar') {
+          const d = hull[0].drink;
+          return (
+            <Stack spacing={1} sx={{ p: 1 }}>
+              <Typography sx={{ fontSize: 20, fontWeight: 900 }}>
+                🚶 På vei fra Samfundet til {hull[0].bar.properties.navn}…
+              </Typography>
+              <PersonKort drink={d} />
+              <Typography sx={{ fontSize: 13, opacity: 0.8 }}>
+                {PROFILER[d].profilnavn} sitter allerede og venter.
+              </Typography>
+              <Button variant="outlined" onClick={() => setIntro('ferdig')}>
+                Hopp over
+              </Button>
+            </Stack>
+          );
+        }
         return (
           <Scorekort
             hull={hull}
@@ -274,17 +341,57 @@ export const MapLibreMap = () => {
       }}
       onClick={() => setValgtBar(undefined)}
     >
-      <BarMarkers
-        barer={BARER.features}
-        hopp={new Set(hull.map((h) => h.bar.properties.id))}
-        onVelg={setValgtBar}
-      />
       {hull.length > 0 && (
         <BaneLayer
-          hull={hull}
-          rute={rute?.geometri}
+          // Kun én og én bar: de vi har besøkt og den vi er på nå
+          hull={hull.slice(
+            0,
+            oppsett.fase === 'spill'
+              ? intro === 'gaar'
+                ? 0
+                : spill.aktivtHull + 1
+              : 1
+          )}
           aktivtHull={oppsett.fase === 'spill' ? spill.aktivtHull : undefined}
           onVelgHull={visHull}
+        />
+      )}
+      {leg && (
+        <>
+          <RSource
+            id="leg"
+            type="geojson"
+            data={{
+              type: 'Feature',
+              properties: {},
+              geometry: { type: 'LineString', coordinates: leg },
+            }}
+          />
+          <RLayer
+            id="leg-linje"
+            source="leg"
+            type="line"
+            layout={{ 'line-cap': 'round', 'line-join': 'round' }}
+            paint={{
+              'line-color': '#00e5ff',
+              'line-width': 6,
+              'line-opacity': 0.9,
+            }}
+          />
+          <GaaMarker
+            linje={leg}
+            varighetMs={8000}
+            ikon="🧑‍🤝‍🧑🚶‍♀️🚶‍♂️"
+            klasse="gjeng"
+            loop
+          />
+        </>
+      )}
+      {oppsett.fase === 'spill' && intro === 'gaar' && hull.length > 0 && (
+        <IntroGange
+          fra={SAMFUNDET}
+          til={hull[0].bar.geometry.coordinates as Punkt}
+          onFerdig={() => setIntro('ferdig')}
         />
       )}
       {valgtBar && (
@@ -314,29 +421,40 @@ export const MapLibreMap = () => {
       )}
       {flyTil && <MapFlyTo lng={flyTil[0]} lat={flyTil[1]} />}
       {naerEvent && (
-        <div className="event-ad">
-          {naerEvent.e.bilde && (
-            <img
-              className="event-bilde"
-              src={`${import.meta.env.BASE_URL}drinks/${naerEvent.e.bilde}`}
-              alt={naerEvent.e.profil ?? naerEvent.e.navn}
-              onError={(e) => {
-                e.currentTarget.style.display = 'none';
-              }}
-            />
-          )}
-          <div className="event-tittel">{naerEvent.e.tittel}</div>
-          <div>{naerEvent.e.tekst}</div>
-          <div className="event-meter">📍 {naerEvent.m} m unna</div>
-          <Button
-            size="small"
-            variant="contained"
-            color="secondary"
-            onClick={() => setLukkedeEventer((l) => [...l, naerEvent.e.id])}
-          >
-            Kult, ikke nå
-          </Button>
+        <div className="gta">
+          <div className="gta-banner">
+            Nytt oppdrag
+            <small>{naerEvent.e.navn}</small>
+          </div>
+          <div className="gta-samtale">
+            {naerEvent.e.bilde && (
+              <img
+                src={`${import.meta.env.BASE_URL}${naerEvent.e.bilde}`}
+                alt={naerEvent.e.profil ?? naerEvent.e.navn}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            )}
+            <div className="gta-tekst">
+              <b>{naerEvent.e.profil ?? naerEvent.e.navn} ringer</b>
+              {naerEvent.e.tekst} Bare {naerEvent.m} m unna.
+              <br />
+              <button
+                onClick={() => setLukkedeEventer((l) => [...l, naerEvent.e.id])}
+              >
+                Legg på
+              </button>
+            </div>
+          </div>
         </div>
+      )}
+      {revealHull !== undefined && hull[revealHull] && (
+        <Reveal
+          drink={hull[revealHull].drink}
+          hullNr={hull[revealHull].nr}
+          onLukk={() => setRevealHull(undefined)}
+        />
       )}
       <Button
         variant="contained"
@@ -370,7 +488,7 @@ export const MapLibreMap = () => {
       >
         <div className="pubgolf-panel">{panel}</div>
 
-        {!kunTinder && (
+        {!kunTinder && oppsett.fase !== 'spill' && (
           <Typography
             variant="caption"
             component="p"

@@ -74,10 +74,13 @@ export function Scorekort({ hull, spill, totalSekunder }: Props) {
       <Typography sx={{ fontSize: 14, color: 'text.secondary' }}>
         Hull {aktivtHull + 1} av {hull.length}
       </Typography>
-      <Typography sx={{ fontSize: 26, fontWeight: 900, lineHeight: 1.1 }}>
+      <Typography
+        sx={{ fontSize: 20, fontWeight: 900, lineHeight: 1.1 }}
+        noWrap
+      >
         {h.bar.properties.navn}
       </Typography>
-      <Typography sx={{ fontSize: 22, mt: 0.5 }}>
+      <Typography sx={{ fontSize: 16, mt: 0.25 }}>
         {drink.emoji} {drink.navn} · Par {h.par} · {h.bar.properties.pris},-
       </Typography>
 
