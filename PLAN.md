@@ -34,14 +34,16 @@ Oppgave 1–4, slider, topp 5 og koroplett er ikke med.
 
 ---
 
-## Steg 0: Oppsett
-- `git remote add upstream …`
-- `git fetch`
-- `git merge upstream/main --allow-unrelated-histories`
-- `npm ci`
-- Lag `.env` lokalt og sjekk at `git status` ikke viser den.
-- Commit `.env.example`.
-- Kjør `npm run build` og `npm run lint` som utgangspunkt.
+## Steg 0: Oppsett (følger README)
+1. Fork [Norkart/norkart-webkurs-React](https://github.com/Norkart/norkart-webkurs-React) med fork-knappen og standardinnstillinger. Da får du `nicolaykopaas/norkart-webkurs-React`.
+2. Klon forken: `git clone https://github.com/nicolaykopaas/norkart-webkurs-React.git`
+3. Kjør `npm install`.
+4. Lag `.env` i rotmappa med `VITE_API_KEY=<nøkkel>`. Sjekk at `git status` ikke viser den.
+5. Kjør `npm run dev` og åpne http://localhost:5173/.
+6. Kopier denne `PLAN.md` inn i forken og commit den sammen med `.env.example`.
+7. Kjør `npm run build` og `npm run lint` som utgangspunkt.
+
+`norkartbedpress`-repoet brukes ikke til koden. Det holdt bare planen.
 
 ## Steg 1: Data (`scripts/scrape.ts`, kjøres én gang)
 **1a. Rekognosering** (trenger nettilgang)
@@ -166,7 +168,7 @@ Ingenting annet røres.
 Før hver push: `npm run build` og `npm run lint` må være grønne, og `.env` skal ikke være staget.
 
 ## Akseptsjekk
-- [ ] Repoet er en fork, og `git log --all -- .env` er tom.
+- [ ] Koden ligger i forken `nicolaykopaas/norkart-webkurs-React`, og `git log --all -- .env` er tom.
 - [ ] `npm run build` er grønn, og `npm run lint` gir 0 feil og ≤ 12 advarsler.
 - [ ] **Oppgave 6:** alle pilssteder vises med farge og størrelse etter pris. Popupen viser navn, pris, happy hour og Guinness. Pilsguiden er kreditert.
 - [ ] **Oppgave 5:** `getRuteMellomPunkter` er implementert, og ruten tegnes som et `line`-lag. Reisetiden fra `CostList` vises.
