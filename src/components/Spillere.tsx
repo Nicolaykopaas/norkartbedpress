@@ -20,12 +20,12 @@ export function Spillere({ spillere, onLeggTil, onFjern, onStart }: Props) {
 
   return (
     <Box sx={{ p: 2, width: '100%', maxWidth: 360 }}>
-      <Typography variant="h6" gutterBottom>
-        Hvem er med?
+      <Typography sx={{ fontSize: 26, fontWeight: 900 }} gutterBottom>
+        Hvem skal drikke? 🍻
       </Typography>
       <Stack direction="row" spacing={1}>
         <TextField
-          size="small"
+          slotProps={{ htmlInput: { style: { fontSize: 22, padding: 14 } } }}
           fullWidth
           placeholder="Navn"
           value={navn}
@@ -37,16 +37,34 @@ export function Spillere({ spillere, onLeggTil, onFjern, onStart }: Props) {
             }
           }}
         />
-        <Button variant="outlined" onClick={leggTil} disabled={!navn.trim()} sx={{ whiteSpace: 'nowrap' }}>
+        <Button
+          variant="outlined"
+          onClick={leggTil}
+          disabled={!navn.trim()}
+          sx={{ whiteSpace: 'nowrap' }}
+        >
           Legg til
         </Button>
       </Stack>
-      <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2, minHeight: 32 }}>
+      <Box
+        sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, my: 2, minHeight: 32 }}
+      >
         {spillere.map((s) => (
-          <Chip key={s.navn} label={s.navn} onDelete={() => onFjern(s.navn)} />
+          <Chip
+            key={s.navn}
+            label={s.navn}
+            onDelete={() => onFjern(s.navn)}
+            sx={{ fontSize: 20, height: 44 }}
+          />
         ))}
       </Box>
-      <Button variant="contained" fullWidth size="large" disabled={spillere.length < 1} onClick={onStart}>
+      <Button
+        variant="contained"
+        fullWidth
+        size="large"
+        disabled={spillere.length < 1}
+        onClick={onStart}
+      >
         Tee off! ⛳
       </Button>
     </Box>
