@@ -237,7 +237,7 @@ function Illustrasjon({ id }: { id: DrinkId }) {
 /** Viser public/drinks/<id>.jpg hvis den finnes, ellers en tegnet person. */
 export function DrinkAvatar({ id }: { id: DrinkId }) {
   const [feil, setFeil] = useState(false);
-  const bilde = `${import.meta.env.BASE_URL}drinks/${id}.jpg`;
+  const bilde = `${import.meta.env.BASE_URL}drinks/${id}.png`;
   return (
     <div
       style={{
