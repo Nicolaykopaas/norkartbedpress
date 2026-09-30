@@ -277,6 +277,11 @@ export const MapLibreMap = () => {
         }}
       >
         <div className="pubgolf-panel">{panel}</div>
+        {oppsett.fase !== 'swipe' && (
+          <Button size="small" color="inherit" onClick={nyRunde} sx={{ mt: 1 }}>
+            ↺ Start på nytt
+          </Button>
+        )}
         <Typography
           variant="caption"
           component="p"
