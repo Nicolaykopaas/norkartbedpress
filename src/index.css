@@ -24,3 +24,10 @@ code {
     pointer-events: all;
   }
 }
+
+.pubgolf-panel,
+.pubgolf-panel *,
+.pubgolf-panel *::before,
+.pubgolf-panel *::after {
+  box-sizing: border-box;
+}
