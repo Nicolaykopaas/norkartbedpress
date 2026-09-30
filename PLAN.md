@@ -183,3 +183,12 @@ Før hver push: `npm run build` og `npm run lint` må være grønne, og `.env` s
 3. Split the G-bonus: −1 slag, eller mer?
 4. Gange eller kjøring? Hvis det ikke finnes en gange-graf, godtar vi kjøreruten?
 5. Hvilke barer har Guinness? Legg dem inn manuelt, eller la brukeren markere hullet selv?
+
+## Status (2026-09-30)
+MVP ferdig og testet lokalt med Norkart-nøkkel:
+- Swipe med profilbilder, match-skjerm, 9-hullsbane fra dyr til billig pils
+- Norkart-kart med 50 ekte steder fra Pilsguiden (8 uten posisjon er hoppet over)
+- Rute via Norkarts ruteberegner (blå linje), scorekort med Split the G, leaderboard med deling
+- Flere spillere på samme mobil
+
+Gjenstår (valgfritt): GitHub Pages-deploy (Pages-kilde + secret `VITE_API_KEY`), posisjon for de 8 siste stedene, gange-graf i stedet for kjørerute.
