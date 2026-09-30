@@ -27,6 +27,7 @@ type Rad = {
   adresse?: string;
   lat?: number;
   lng?: number;
+  guinness?: boolean;
 };
 type Override = {
   lat?: number;
@@ -222,6 +223,7 @@ async function detaljer(r: Rad) {
     : `${BASE}${r.href.startsWith('/') ? '' : '/'}${r.href}`;
   try {
     const html = await hentTekst(url);
+    if (/guinness/i.test(html)) r.guinness = true;
     const root = parse(html);
     for (const s of root.querySelectorAll(
       'script[type="application/ld+json"]'
@@ -379,7 +381,7 @@ async function main() {
         pris: o.pris ?? r.pris,
         happyHour: r.happyHour,
         bydel: r.bydel || 'Ukjent',
-        ...(o.guinness ? { guinness: true } : {}),
+        ...((o.guinness ?? r.guinness) ? { guinness: true } : {}),
       },
     });
   }
