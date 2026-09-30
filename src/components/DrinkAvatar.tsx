@@ -235,14 +235,17 @@ function Illustrasjon({ id }: { id: DrinkId }) {
 }
 
 /** Viser public/drinks/<id>.jpg hvis den finnes, ellers en tegnet person. */
-export function DrinkAvatar({ id }: { id: DrinkId }) {
+export function DrinkAvatar({ id, fyll }: { id: DrinkId; fyll?: boolean }) {
   const [feil, setFeil] = useState(false);
   const bilde = `${import.meta.env.BASE_URL}drinks/${id}.png`;
   return (
     <div
       style={{
-        width: '100%',
-        aspectRatio: '1 / 1',
+        // Kvadrat, men aldri høyere enn at kortet og knappene får plass uten scrolling
+        width: fyll ? '100%' : 'min(100%, 40dvh)',
+        height: fyll ? '100%' : undefined,
+        aspectRatio: fyll ? undefined : '1 / 1',
+        margin: '0 auto',
         borderRadius: 12,
         overflow: 'hidden',
       }}
@@ -259,6 +262,7 @@ export function DrinkAvatar({ id }: { id: DrinkId }) {
             width: '100%',
             height: '100%',
             objectFit: 'cover',
+            pointerEvents: 'none',
             display: 'block',
           }}
         />
