@@ -1,0 +1,60 @@
+# Kopiert fra https://www.pilsguiden.no/liste/trondelag/trondheim (2026-09-30)
+# Format: navn [⏰ = happy hour] [*] pris,-   (pris per halvliter)
+Bifrons Trondheim⏰ * 61,-
+Hammerhead BC. Taproom & Juicy Burger⏰ * 61,-
+Los Tacos Trondheim⏰ * 74,-
+Bar Circus Trondheim* 75,-
+Digg Pizza - Sirkus* 81,-
+Digg Nordre Gate - Trondheim* 81,-
+Super Hero Burger* 86,-
+Super Hero Pizza* 86,-
+Heidi's Bier Bar Trondheim⏰ * 86,-
+Super Hero Burger Torget* 86,-
+Verkstedhallen & Lobbyen93,-
+Fru Lundgreen98,-
+Aust 63˚nord Trondheim99,-
+Ramp Pub & Spiseri104,-
+Sing Sing Karaoke Trondheim105,-
+Studentersamfundet i Trondhjem* 106,-
+Rosendal Kafé Trondheim106,-
+Xu‘s Nan Jing Hus109,-
+Havet Trondheim109,-
+Ciabatta Trondheim110,-
+Ila Brainnstasjon115,-
+Antikvariatet Musikkafe og Bokbar115,-
+Work-Work Trondheim* 119,-
+Restaurant Milano Nardo119,-
+Den gode nabo Trondheim119,-
+Bobbys Bar120,-
+P-Hotels Brattøra120,-
+Daniel på hjørnet120,-
+Lager11 Street Food & Scene* 124,-
+Lille Skansen Trondheim125,-
+Flipper Kafe129,-
+Pincho Nation Trondheim129,-
+Olavstorget129,-
+Lan Na Restaurant* 131,-
+Broen Bar & Restaurant131,-
+Ladekaia* 132,-
+Raus Bar Trondheim* 132,-
+E.C. Dahls Pub og Kjøkken* 135,-
+Blomster og Vin* 136,-
+Leos Pizzeria136,-
+Brooklyn Diner and Sportsbar Trondheim* 136,-
+Ladejarlen* 136,-
+Olivia Solsiden* 136,-
+Hamo Bar Trondheim* 136,-
+San Sebastian Torget* 136,-
+Kafe Skuret Trondheim* 136,-
+Radisson Blu Royal Garden Hotel139,-
+Egon Solsiden* 140,-
+Egon Lade* 140,-
+Egon Restaurant Tyholttårnet* 140,-
+Scandic Lerkendal* 140,-
+Egon Prinsen* 140,-
+Egon Søndre* 140,-
+Lille London* 140,-
+Egon City Syd* 140,-
+Scandic Nidelven* 149,-
+Tollbua Trondheim* 149,-
+Clarion Hotel & Congress Trondheim* 150,-

@@ -284,14 +284,46 @@ async function norkart(adresse: string): Promise<[number, number] | undefined> {
   }
 }
 
+let sisteBydel = '';
 async function nominatim(q: string): Promise<[number, number] | undefined> {
-  try {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&limit=1&viewbox=${BBOX.minLng},${BBOX.maxLat},${BBOX.maxLng},${BBOX.minLat}&bounded=1&q=${encodeURIComponent(q)}`;
-    const j = await (await hent(url)).json();
-    return j?.[0] ? [Number(j[0].lon), Number(j[0].lat)] : undefined;
-  } catch {
-    return undefined;
+  // Prøv fullt navn, og så uten "Trondheim"/"Trondhjem" og bindestreker
+  const kort = q
+    .replace(/,?\s*Trondheim$/i, '')
+    .replace(/\b(Trondheim|Trondhjem)\b/gi, '')
+    .replace(/\s+-\s+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+  for (const sporring of [q, `${kort}, Trondheim`]) {
+    try {
+      const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=1&viewbox=${BBOX.minLng},${BBOX.maxLat},${BBOX.maxLng},${BBOX.minLat}&bounded=1&q=${encodeURIComponent(sporring)}`;
+      const j = await (await hent(url)).json();
+      if (j?.[0]) {
+        const a = j[0].address ?? {};
+        sisteBydel =
+          a.suburb ?? a.city_district ?? a.quarter ?? a.neighbourhood ?? '';
+        return [Number(j[0].lon), Number(j[0].lat)];
+      }
+    } catch {
+      /* prøv neste */
+    }
   }
+  return undefined;
+}
+
+/** Leser lista kopiert fra pilsguiden: "Navn⏰ * 61,-" per linje */
+function fraTekstfil(fil: string): Rad[] {
+  return readFileSync(fil, 'utf8')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith('#'))
+    .map((l) => l.match(/^(.*?)\s*(⏰)?\s*\*?\s*(\d{2,3}),-$/))
+    .filter((m): m is RegExpMatchArray => !!m)
+    .map((m) => ({
+      navn: rens(m[1]),
+      pris: Number(m[3]),
+      happyHour: !!m[2],
+      bydel: '',
+    }));
 }
 
 const iTrondheim = (lng: number, lat: number) =>
@@ -302,14 +334,7 @@ const iTrondheim = (lng: number, lat: number) =>
 
 // --- main -------------------------------------------------------------------
 
-async function main() {
-  lesEnv();
-  const overrides: Record<string, Override> = existsSync(
-    'scripts/overrides.json'
-  )
-    ? JSON.parse(readFileSync('scripts/overrides.json', 'utf8'))
-    : {};
-
+async function fraNett(): Promise<Rad[]> {
   console.log('Henter', LISTE);
   const html = await hentTekst(LISTE);
   let rader = fraJson(html);
@@ -344,6 +369,27 @@ async function main() {
     }
   }
 
+  return rader;
+}
+
+async function main() {
+  lesEnv();
+  const overrides: Record<string, Override> = existsSync(
+    'scripts/overrides.json'
+  )
+    ? JSON.parse(readFileSync('scripts/overrides.json', 'utf8'))
+    : {};
+
+  const FIL = 'scripts/pilsguiden-trondheim.txt';
+  let rader: Rad[];
+  if (existsSync(FIL) && !process.argv.includes('--nett')) {
+    // Pilsguiden laster prisene med JavaScript, så lista er kopiert inn manuelt
+    rader = fraTekstfil(FIL);
+    console.log(`Leste ${rader.length} steder fra ${FIL}`);
+  } else {
+    rader = await fraNett();
+  }
+
   // Detaljer + geokoding
   const ut = [];
   for (const r of rader) {
@@ -362,8 +408,10 @@ async function main() {
       kilde = 'norkart';
     }
     if (!pos) {
+      sisteBydel = '';
       pos = await nominatim(`${r.navn}, Trondheim`);
       kilde = 'nominatim';
+      if (!r.bydel) r.bydel = sisteBydel;
     }
     if (!pos || !iTrondheim(pos[0], pos[1])) {
       console.warn(
