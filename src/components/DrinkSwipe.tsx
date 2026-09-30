@@ -6,6 +6,8 @@ import type { DrinkId } from '../types/pubgolf';
 import { DRINKS } from '../data/drinks';
 
 const TERSKEL = 100;
+/** Man sveiper til man har så mange matcher */
+export const MAL_MATCHER = 7;
 
 export function DrinkSwipe({
   onFerdig,
@@ -32,7 +34,7 @@ export function DrinkSwipe({
       setTimeout(() => {
         setFlyr(0);
         setDx(0);
-        if (indeks + 1 >= DRINKS.length) {
+        if (nyeValgte.length >= MAL_MATCHER || indeks + 1 >= DRINKS.length) {
           ferdigKalt.current = true;
           onFerdig(nyeValgte.length > 0 ? nyeValgte : ['pils']);
         } else {
@@ -113,7 +115,8 @@ export function DrinkSwipe({
   return (
     <Box sx={{ width: '100%', maxWidth: 360, mx: 'auto', textAlign: 'center' }}>
       <Typography sx={{ fontSize: 14, mb: 1, opacity: 0.8 }}>
-        {indeks + 1}/{DRINKS.length} · sveip høyre = 💚, venstre = ❌
+        💚 {valgte.length}/{MAL_MATCHER} matcher · sveip høyre = 💚, venstre =
+        ❌
       </Typography>
       <Box
         sx={{
