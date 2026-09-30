@@ -52,7 +52,15 @@ type Oppsett = { fase: Fase; drinks: DrinkId[]; startId?: string };
 function lesOppsett(): Oppsett {
   try {
     const raw = localStorage.getItem(OPPSETT_KEY);
-    if (raw) return JSON.parse(raw) as Oppsett;
+    if (raw) {
+      const o = JSON.parse(raw) as Oppsett;
+      // En lagret runde kan peke på en bar som ikke finnes lenger (nye data)
+      const finnes = BARER.features.some((b) => b.properties.id === o.startId);
+      if ((o.fase === 'spillere' || o.fase === 'spill') && !finnes) {
+        return { fase: 'start', drinks: o.drinks ?? [] };
+      }
+      return o;
+    }
   } catch {
     /* ignorer */
   }
@@ -136,7 +144,7 @@ export const MapLibreMap = () => {
   }, [aktivBar]);
 
   const panel = (() => {
-    if (spill.ferdig) {
+    if (spill.ferdig && hull.length > 0) {
       return (
         <Leaderboard
           hull={hull}
