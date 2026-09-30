@@ -1,1 +1,59 @@
-{}
+{
+  "Clarion Hotel & Congress Trondheim": {
+    "adresse": "Brattørkaia 1"
+  },
+  "Egon Restaurant Tyholttårnet": {
+    "adresse": "Otto Nielsens vei 4"
+  },
+  "Antikvariatet Musikkafe og Bokbar": {
+    "adresse": "Nedre Bakklandet 4"
+  },
+  "Lager11 Street Food & Scene": {
+    "adresse": "Sluppenvegen 11"
+  },
+  "Digg Pizza - Sirkus": {
+    "adresse": "Falkenborgvegen 1"
+  },
+  "Olivia Solsiden": {
+    "sok": "Olivia, Beddingen, Trondheim"
+  },
+  "Hammerhead BC. Taproom & Juicy Burger": {
+    "sok": "Hammerhead, Trondheim"
+  },
+  "Bar Circus Trondheim": {
+    "sok": "Circus, Trondheim"
+  },
+  "Super Hero Burger Torget": {
+    "sok": "Super Hero Burger, Torvet, Trondheim"
+  },
+  "Verkstedhallen & Lobbyen": {
+    "sok": "Verkstedhallen, Trondheim"
+  },
+  "Aust 63˚nord Trondheim": {
+    "sok": "Aust, Trondheim"
+  },
+  "Rosendal Kafé Trondheim": {
+    "sok": "Rosendal Teater, Trondheim"
+  },
+  "Xu‘s Nan Jing Hus": {
+    "sok": "Nan Jing, Trondheim"
+  },
+  "Pincho Nation Trondheim": {
+    "sok": "Pincho Nation, Trondheim"
+  },
+  "Broen Bar & Restaurant": {
+    "sok": "Broen, Trondheim"
+  },
+  "Blomster og Vin": {
+    "sok": "Blomster og Vin, Trondheim"
+  },
+  "Leos Pizzeria": {
+    "sok": "Leo's Pizzeria, Trondheim"
+  },
+  "Brooklyn Diner and Sportsbar Trondheim": {
+    "sok": "Brooklyn, Trondheim"
+  },
+  "Hamo Bar Trondheim": {
+    "sok": "Hamo, Trondheim"
+  }
+}

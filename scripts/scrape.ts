@@ -35,6 +35,10 @@ type Override = {
   guinness?: boolean;
   skip?: boolean;
   pris?: number;
+  /** Gateadresse som geokodes med Norkart */
+  adresse?: string;
+  /** Alternativ søketekst for Nominatim */
+  sok?: string;
 };
 
 // --- hjelpere ---------------------------------------------------------------
@@ -395,6 +399,7 @@ async function main() {
   for (const r of rader) {
     const o = overrides[r.navn] ?? {};
     if (o.skip) continue;
+    if (o.adresse) r.adresse = o.adresse;
     await detaljer(r);
     let pos: [number, number] | undefined =
       o.lat && o.lng
@@ -406,10 +411,14 @@ async function main() {
     if (!pos && r.adresse) {
       pos = await norkart(r.adresse);
       kilde = 'norkart';
+      if (!pos) {
+        pos = await nominatim(`${r.adresse}, Trondheim`);
+        kilde = 'nominatim-adresse';
+      }
     }
     if (!pos) {
       sisteBydel = '';
-      pos = await nominatim(`${r.navn}, Trondheim`);
+      pos = await nominatim(o.sok ?? `${r.navn}, Trondheim`);
       kilde = 'nominatim';
       if (!r.bydel) r.bydel = sisteBydel;
     }
