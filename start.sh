@@ -10,4 +10,9 @@ if [ ! -f .env ]; then
 fi
 
 npm install
+
+# Hent ekte priser hvis appen fortsatt bruker eksempeldata
+if grep -q '"eksempel-' src/sample_data/olpriser.json; then
+  npm run scrape || echo "Skraping feilet – appen bruker eksempeldata. Se scripts/debug/."
+fi
 npm run dev -- --open
