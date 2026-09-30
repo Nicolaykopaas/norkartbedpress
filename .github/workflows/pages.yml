@@ -29,7 +29,8 @@ jobs:
       - run: npm ci
       - run: npm run build -- --base /${{ github.event.repository.name }}/
         env:
-          VITE_API_KEY: ${{ secrets.VITE_API_KEY }}
+          # Nøkkelen ligger i Cloudflare Worker, ikke i bygget
+          VITE_PROXY_URL: https://pubgolf-norkart-proxy.nicolay-kopaas.workers.dev
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

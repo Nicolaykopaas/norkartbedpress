@@ -537,6 +537,12 @@ const transformRequest: RequestTransformFunction = (url) => {
     return { url };
   }
 
+  // I produksjon går alt via proxyen, som holder nøkkelen hemmelig
+  const proxy = import.meta.env.VITE_PROXY_URL;
+  if (proxy) {
+    return { url: `${proxy}/mvt/${url.slice(KVP_BASE_URL.length)}` };
+  }
+
   const apiKey = (import.meta.env.VITE_API_KEY ?? '').replace(
     /[^A-Za-z0-9-]/g,
     ''

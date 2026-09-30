@@ -6,7 +6,10 @@ export const getRuteMellomPunkter = async (
   via: [number, number][] = []
 ) => {
   const apiKey = (import.meta.env.VITE_API_KEY ?? '').replace(/[^A-Za-z0-9-]/g, '');
-  const query = `https://ruteberegner.api.norkart.no/Route/Expanded`;
+  const proxy = import.meta.env.VITE_PROXY_URL;
+  const query = proxy
+    ? `${proxy}/route`
+    : `https://ruteberegner.api.norkart.no/Route/Expanded`;
 
   const postData = {
     Start: {
@@ -45,7 +48,8 @@ export const getRuteMellomPunkter = async (
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
-        'X-WAAPI-TOKEN': `${apiKey}`,
+        // Med proxy legges nøkkelen på av Workeren
+        ...(proxy ? {} : { 'X-WAAPI-TOKEN': `${apiKey}` }),
       },
       body: JSON.stringify(postData),
     });
