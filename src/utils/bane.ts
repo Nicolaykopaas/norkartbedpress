@@ -121,12 +121,34 @@ export function lagBesteBane(
     antallHull?: number;
     maksAvstandMeter?: number;
     maksRadiusMeter?: number;
+    /** Start nær dette punktet (lng, lat), f.eks. midt i Midtbyen */
+    startSenter?: [number, number];
+    startRadiusMeter?: number;
   } = {}
 ): Hull[] {
   const antallHull = opts.antallHull ?? 9;
+  let kandidater = barer;
+  if (opts.startSenter) {
+    const sentrum = opts.startSenter;
+    const nar = barer.filter(
+      (b) =>
+        haversineMeter(sentrum, b.geometry.coordinates as [number, number]) <=
+        (opts.startRadiusMeter ?? 600)
+    );
+    kandidater =
+      nar.length > 0
+        ? nar
+        : [
+            barer.reduce((a, b) =>
+              haversineMeter(sentrum, pos(b)) < haversineMeter(sentrum, pos(a))
+                ? b
+                : a
+            ),
+          ];
+  }
   let beste: Hull[] = [];
   let besteScore = Infinity;
-  for (const start of barer) {
+  for (const start of kandidater) {
     const bane = lagBane(start, barer, drinks, opts);
     let score = (antallHull - bane.length) * 10000;
     for (let i = 1; i < bane.length; i++) {

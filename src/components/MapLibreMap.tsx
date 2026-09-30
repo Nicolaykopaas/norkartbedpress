@@ -8,7 +8,9 @@ import { useEffect, useMemo, useState } from 'react';
 import type { FeatureCollection } from 'geojson';
 import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { Overlay } from './Overlay';
-import { PilsLayer, PrisLegend } from './PilsLayer';
+import { PrisLegend } from './PilsLayer';
+import { BarMarkers } from './BarMarkers';
+import { EVENTER } from '../data/events';
 import { BaneLayer } from './BaneLayer';
 import { DrinkSwipe } from './DrinkSwipe';
 import { Spillere } from './Spillere';
@@ -16,12 +18,13 @@ import { Scorekort } from './Scorekort';
 import { Leaderboard } from './Leaderboard';
 import { MatchSkjerm } from './MatchSkjerm';
 import { usePubgolf } from '../hooks/usePubgolf';
-import { lagBane, lagBesteBane } from '../utils/bane';
+import { haversineMeter, lagBane, lagBesteBane } from '../utils/bane';
 import { getBaneRute } from '../api/getBaneRute';
 import type { Bar, BarCollection, DrinkId } from '../types/pubgolf';
 import olpriser from '../sample_data/olpriser.json';
 
-const TRONDHEIM_COORDS: [number, number] = [10.40565401, 63.4156575];
+// Torvet, midt i Midtbyen
+const TRONDHEIM_COORDS: [number, number] = [10.39506, 63.43049];
 
 const KVP_BASE_URL = 'https://kvp.maps.norkart.no/mvt/';
 
@@ -34,13 +37,25 @@ type NorkartBasemapVariant =
   | 'transparent'
   | 'hybrid'
   | 'ortofoto';
-const NORKART_BASEMAP_VARIANT: NorkartBasemapVariant = 'greyscale';
+const NORKART_BASEMAP_VARIANT: NorkartBasemapVariant = 'hybrid';
 
 const NORKART_BASEMAP_STYLE = `${KVP_BASE_URL}norkart-basemap/${NORKART_BASEMAP_VARIANT}/style.json`;
 
 const ANTALL_HULL = 9;
 const OPPSETT_KEY = 'pubgolf-oppsett-v1';
-const BARER = olpriser as BarCollection;
+const ALLE_BARER = olpriser as BarCollection;
+// Vi holder oss til Midtbyen (rundt Torvet) og Studentersamfundet
+const BARER: BarCollection = {
+  ...ALLE_BARER,
+  features: ALLE_BARER.features.filter(
+    (b) =>
+      b.properties.navn.includes('Studentersamfundet') ||
+      haversineMeter(
+        TRONDHEIM_COORDS,
+        b.geometry.coordinates as [number, number]
+      ) <= 650
+  ),
+};
 const ER_EKSEMPELDATA = BARER.features.some((f) =>
   f.properties.id.startsWith('eksempel-')
 );
@@ -108,17 +123,10 @@ export const MapLibreMap = () => {
     };
   }, [hull]);
 
-  const onMapClick = (e: MapLayerMouseEvent) => {
-    const treff = e.target.queryRenderedFeatures(e.point, {
-      layers: ['pils-circle'],
-    });
-    const id = treff[0]?.properties?.id;
-    setValgtBar(BARER.features.find((b) => b.properties.id === id));
-  };
-
   const planleggBane = () => {
     const bane = lagBesteBane(BARER.features, oppsett.drinks, {
       antallHull: ANTALL_HULL,
+      startSenter: TRONDHEIM_COORDS,
     });
     if (bane.length === 0) return;
     const start = bane[0].bar;
@@ -151,6 +159,23 @@ export const MapLibreMap = () => {
   useEffect(() => {
     if (aktivBar) setFlyTil(aktivBar.geometry.coordinates as [number, number]);
   }, [aktivBar]);
+
+  const kunTinder = oppsett.fase === 'swipe' || oppsett.fase === 'match';
+
+  const [lukkedeEventer, setLukkedeEventer] = useState<string[]>([]);
+  const naerEvent = aktivBar
+    ? EVENTER.map((e) => ({
+        e,
+        m: Math.round(
+          haversineMeter(
+            [e.lng, e.lat],
+            aktivBar.geometry.coordinates as [number, number]
+          )
+        ),
+      }))
+        .filter((x) => x.m <= 500 && !lukkedeEventer.includes(x.e.id))
+        .sort((a, b) => a.m - b.m)[0]
+    : undefined;
 
   const panel = (() => {
     if (spill.ferdig && hull.length > 0) {
@@ -217,19 +242,43 @@ export const MapLibreMap = () => {
     }
   })();
 
+  if (kunTinder) {
+    return (
+      <div className="start-skjerm">
+        <div className="start-kort">
+          {panel}
+          <Button
+            fullWidth
+            color="secondary"
+            onClick={nyRunde}
+            sx={{ mt: 1, height: 48, fontWeight: 900 }}
+          >
+            ↺ Restart
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <RMap
       minZoom={6}
       initialCenter={TRONDHEIM_COORDS}
-      initialZoom={12}
+      initialZoom={15}
+      initialPitch={50}
+      maxPitch={75}
       mapStyle={NORKART_BASEMAP_STYLE}
       initialTransformRequest={transformRequest}
       style={{
         height: `calc(100dvh - var(--header-height))`,
       }}
-      onClick={onMapClick}
+      onClick={() => setValgtBar(undefined)}
     >
-      <PilsLayer barer={BARER} />
+      <BarMarkers
+        barer={BARER.features}
+        hopp={new Set(hull.map((h) => h.bar.properties.id))}
+        onVelg={setValgtBar}
+      />
       {hull.length > 0 && (
         <BaneLayer
           hull={hull}
@@ -264,44 +313,85 @@ export const MapLibreMap = () => {
         </RPopup>
       )}
       {flyTil && <MapFlyTo lng={flyTil[0]} lat={flyTil[1]} />}
-      <Overlay
-        style={{
+      {naerEvent && (
+        <div className="event-ad">
+          {naerEvent.e.bilde && (
+            <img
+              className="event-bilde"
+              src={`${import.meta.env.BASE_URL}drinks/${naerEvent.e.bilde}`}
+              alt={naerEvent.e.profil ?? naerEvent.e.navn}
+              onError={(e) => {
+                e.currentTarget.style.display = 'none';
+              }}
+            />
+          )}
+          <div className="event-tittel">{naerEvent.e.tittel}</div>
+          <div>{naerEvent.e.tekst}</div>
+          <div className="event-meter">📍 {naerEvent.m} m unna</div>
+          <Button
+            size="small"
+            variant="contained"
+            color="secondary"
+            onClick={() => setLukkedeEventer((l) => [...l, naerEvent.e.id])}
+          >
+            Kult, ikke nå
+          </Button>
+        </div>
+      )}
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={nyRunde}
+        sx={{
           position: 'absolute',
           top: 12,
-          left: 12,
+          right: 12,
+          zIndex: 2,
+          height: 44,
+          fontWeight: 900,
+          boxShadow: '0 0 14px #ff2bd6',
+        }}
+      >
+        ↺ Restart
+      </Button>
+      <Overlay
+        className={kunTinder ? 'panel-midt' : 'panel-bunn'}
+        style={{
+          position: 'absolute',
+          top: kunTinder ? '50%' : 12,
+          left: kunTinder ? '50%' : 12,
+          transform: kunTinder ? 'translate(-50%, -50%)' : undefined,
           zIndex: 1,
           width: 'min(360px, calc(100vw - 48px))',
-          maxHeight: 'calc(100% - 48px)',
+          maxHeight: 'calc(100% - 24px)',
           overflowY: 'auto',
           padding: '12px',
         }}
       >
         <div className="pubgolf-panel">{panel}</div>
-        {oppsett.fase !== 'swipe' && (
-          <Button size="small" color="inherit" onClick={nyRunde} sx={{ mt: 1 }}>
-            ↺ Start på nytt
-          </Button>
+
+        {!kunTinder && (
+          <Typography
+            variant="caption"
+            component="p"
+            sx={{ mt: 1, color: 'text.secondary' }}
+          >
+            {ER_EKSEMPELDATA ? (
+              'Eksempeldata (fiktive barer). Kjør skrapeskriptet for ekte priser.'
+            ) : (
+              <>
+                Priser:{' '}
+                <a
+                  href="https://www.pilsguiden.no/liste/trondelag/trondheim"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Pilsguiden.no
+                </a>
+              </>
+            )}
+          </Typography>
         )}
-        <Typography
-          variant="caption"
-          component="p"
-          sx={{ mt: 1, color: 'text.secondary' }}
-        >
-          {ER_EKSEMPELDATA ? (
-            'Eksempeldata (fiktive barer). Kjør skrapeskriptet for ekte priser.'
-          ) : (
-            <>
-              Priser:{' '}
-              <a
-                href="https://www.pilsguiden.no/liste/trondelag/trondheim"
-                target="_blank"
-                rel="noreferrer"
-              >
-                Pilsguiden.no
-              </a>
-            </>
-          )}
-        </Typography>
       </Overlay>
     </RMap>
   );
@@ -311,7 +401,14 @@ function MapFlyTo({ lng, lat }: { lng: number; lat: number }) {
   const map = useMap();
 
   useEffect(() => {
-    map.flyTo({ center: [lng, lat], zoom: 16, speed: 1.5 });
+    const mobil = window.matchMedia('(max-width: 600px)').matches;
+    map.flyTo({
+      center: [lng, lat],
+      zoom: 15.5,
+      speed: 1.5,
+      // Panelet ligger nederst på mobil, så flytt midten opp
+      padding: { top: 0, left: 0, right: 0, bottom: mobil ? 320 : 0 },
+    });
   }, [lng, lat, map]);
 
   return null;

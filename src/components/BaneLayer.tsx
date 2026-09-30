@@ -1,5 +1,6 @@
 import { RLayer, RMarker, RSource } from 'maplibre-react-components';
 import type { FeatureCollection } from 'geojson';
+import { BarLogo } from './BarLogo';
 import type { Hull } from '../types/pubgolf';
 
 export function BaneLayer({
@@ -25,8 +26,8 @@ export function BaneLayer({
             layout={{ 'line-join': 'round', 'line-cap': 'round' }}
             paint={{
               // Grå = luftlinje (ruteberegning feilet)
-              'line-color': ['case', ['has', 'rett'], '#888888', '#1a73e8'],
-              'line-width': 5,
+              'line-color': ['case', ['has', 'rett'], '#888888', '#00e5ff'],
+              'line-width': 6,
               'line-opacity': 0.8,
             }}
           />
@@ -46,24 +47,11 @@ export function BaneLayer({
             }}
           >
             <div
+              className={`bar-marker${aktiv ? ' aktiv' : ''}`}
               title={`Hull ${h.nr}: ${h.bar.properties.navn}`}
-              style={{
-                width: aktiv ? 34 : 26,
-                height: aktiv ? 34 : 26,
-                borderRadius: '50%',
-                background: aktiv ? '#1a73e8' : 'white',
-                color: aktiv ? 'white' : '#1a73e8',
-                border: '3px solid #1a73e8',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontWeight: 700,
-                fontSize: aktiv ? 16 : 13,
-                cursor: 'pointer',
-                boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
-              }}
             >
-              {h.nr}
+              <div className="bar-pris">{h.bar.properties.pris},-</div>
+              <BarLogo bar={h.bar.properties} nr={h.nr} />
             </div>
           </RMarker>
         );
