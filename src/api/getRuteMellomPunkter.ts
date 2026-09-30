@@ -2,7 +2,8 @@ export const getRuteMellomPunkter = async (
   startX: number,
   startY: number,
   stoppX: number,
-  stoppY: number
+  stoppY: number,
+  via: [number, number][] = []
 ) => {
   const apiKey = import.meta.env.VITE_API_KEY;
   const query = `https://ruteberegner.api.norkart.no/Route/Expanded`;
@@ -18,7 +19,11 @@ export const getRuteMellomPunkter = async (
       Y: stoppY,
       FeatureSnapRestriction: ['Road', 'Motorway'],
     },
-    ViaPoints: [],
+    ViaPoints: via.map(([X, Y]) => ({
+      X,
+      Y,
+      FeatureSnapRestriction: ['Road', 'Motorway'],
+    })),
     SrsId: 4326,
     GraphName: 'ta-norden-dynamic',
     CostFunction: 'time',
@@ -34,14 +39,25 @@ export const getRuteMellomPunkter = async (
     ZoomLevel: 14,
   };
 
-  // TODO: Fullfør/endre koden for å hente og returnere en kjørerute mellom to punkter
+  try {
+    const apiResult = await fetch(query, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        'X-WAAPI-TOKEN': `${apiKey}`,
+      },
+      body: JSON.stringify(postData),
+    });
 
-  // Hint: Du kan se på getHoydeFromPunkt for å få en idé om hvordan dette kan gjøres.
-  // Dette er en POST request, akkurat som getHoydeFromPunkt.
-
-  // Responsen inneholder bl.a. RouteGeometry (en GeoJSON MultiLineString) som kan vises i
-  // kartet, og en liste med kostnader (CostList) for ruten.
-
-  // Når du har fått til kallet til API-et kan du se i Network-taben i nettleseren eller i
-  // konsollen for å se hvordan responsen ser ut.
+    if (apiResult.ok) {
+      // Inneholder bl.a. RouteGeometry (MultiLineString) og CostList
+      return await apiResult.json();
+    }
+    console.error('Rute-kall feilet med status:', apiResult.status);
+    return undefined;
+  } catch (error) {
+    console.error('Feil ved henting av rute:', error);
+    return undefined;
+  }
 };
