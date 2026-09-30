@@ -348,7 +348,7 @@ const transformRequest: RequestTransformFunction = (url) => {
     return { url };
   }
 
-  const apiKey = (import.meta.env.VITE_API_KEY ?? '').trim();
+  const apiKey = (import.meta.env.VITE_API_KEY ?? '').replace(/[^A-Za-z0-9-]/g, '');
   const separator = url.includes('?') ? '&' : '?';
   return { url: `${url}${separator}api_key=${encodeURIComponent(apiKey)}` };
 };

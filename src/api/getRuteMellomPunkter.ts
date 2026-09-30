@@ -5,7 +5,7 @@ export const getRuteMellomPunkter = async (
   stoppY: number,
   via: [number, number][] = []
 ) => {
-  const apiKey = (import.meta.env.VITE_API_KEY ?? '').trim();
+  const apiKey = (import.meta.env.VITE_API_KEY ?? '').replace(/[^A-Za-z0-9-]/g, '');
   const query = `https://ruteberegner.api.norkart.no/Route/Expanded`;
 
   const postData = {
