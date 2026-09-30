@@ -1,11 +1,17 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Box, Button, Card, CardContent, Typography } from '@mui/material';
+import { DrinkAvatar } from './DrinkAvatar';
+import { PROFILER } from '../data/profiler';
 import type { DrinkId } from '../types/pubgolf';
 import { DRINKS } from '../data/drinks';
 
 const TERSKEL = 100;
 
-export function DrinkSwipe({ onFerdig }: { onFerdig: (valgte: DrinkId[]) => void }) {
+export function DrinkSwipe({
+  onFerdig,
+}: {
+  onFerdig: (valgte: DrinkId[]) => void;
+}) {
   const [indeks, setIndeks] = useState(0);
   const [valgte, setValgte] = useState<DrinkId[]>([]);
   const [dx, setDx] = useState(0);
@@ -29,7 +35,7 @@ export function DrinkSwipe({ onFerdig }: { onFerdig: (valgte: DrinkId[]) => void
         setIndeks(indeks + 1);
       }
     },
-    [indeks, valgte, onFerdig],
+    [indeks, valgte, onFerdig]
   );
 
   useEffect(() => {
@@ -73,7 +79,9 @@ export function DrinkSwipe({ onFerdig }: { onFerdig: (valgte: DrinkId[]) => void
       <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
         {indeks + 1}/{DRINKS.length}
       </Typography>
-      <Box sx={{ position: 'relative', touchAction: 'pan-y', userSelect: 'none' }}>
+      <Box
+        sx={{ position: 'relative', touchAction: 'pan-y', userSelect: 'none' }}
+      >
         <Card
           key={drink.id}
           onPointerDown={onPointerDown}
@@ -93,7 +101,7 @@ export function DrinkSwipe({ onFerdig }: { onFerdig: (valgte: DrinkId[]) => void
                 position: 'absolute',
                 top: 16,
                 [dx > 0 ? 'left' : 'right']: 16,
-                zIndex: 1,
+                zIndex: 2,
                 px: 1,
                 fontWeight: 900,
                 fontSize: 28,
@@ -108,23 +116,35 @@ export function DrinkSwipe({ onFerdig }: { onFerdig: (valgte: DrinkId[]) => void
               {dx > 0 ? 'LIKER' : 'NOPE'}
             </Typography>
           )}
-          <CardContent sx={{ py: 4 }}>
-            <Typography sx={{ fontSize: 96, lineHeight: 1.1 }}>{drink.emoji}</Typography>
-            <Typography variant="h4" component="h3">
-              {drink.navn}
+          <DrinkAvatar id={drink.id} />
+          <CardContent sx={{ py: 2 }}>
+            <Typography variant="h5" component="h3">
+              {PROFILER[drink.id].profilnavn}, {PROFILER[drink.id].alder}
             </Typography>
-            <Typography variant="subtitle1" color="primary" sx={{ mb: 2 }}>
-              Par: {drink.par} slurker
+            <Typography variant="subtitle1" color="primary" sx={{ mb: 1 }}>
+              {drink.emoji} {drink.navn} · Par {drink.par} slurker
             </Typography>
             <Typography variant="body1">{drink.beskrivelse}</Typography>
           </CardContent>
         </Card>
       </Box>
       <Box sx={{ display: 'flex', justifyContent: 'center', gap: 3, mt: 3 }}>
-        <Button variant="outlined" color="error" size="large" onClick={() => avgjor(false)} aria-label="Nei">
+        <Button
+          variant="outlined"
+          color="error"
+          size="large"
+          onClick={() => avgjor(false)}
+          aria-label="Nei"
+        >
           ❌
         </Button>
-        <Button variant="outlined" color="success" size="large" onClick={() => avgjor(true)} aria-label="Ja">
+        <Button
+          variant="outlined"
+          color="success"
+          size="large"
+          onClick={() => avgjor(true)}
+          aria-label="Ja"
+        >
           💚
         </Button>
       </Box>

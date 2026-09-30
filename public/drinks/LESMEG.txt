@@ -1,0 +1,2 @@
+Legg ekte bilder her som <drink-id>.jpg (pils, guinness, ipa, cider, seltzer, shot, gintonic, rodvin, alkoholfri).
+De erstatter de tegnede personene på swipe-kortene. Bruk bare bilder dere har rett til å bruke.
