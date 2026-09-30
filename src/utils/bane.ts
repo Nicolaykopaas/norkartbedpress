@@ -37,8 +37,8 @@ export function lagBane(
   const antallHull = opts.antallHull ?? 9;
   const maksAvstand = opts.maksAvstandMeter ?? 800;
   const maksRadius = opts.maksRadiusMeter ?? 1500;
-  const drinkListe: DrinkId[] = drinks.length > 0 ? drinks : ['pils'];
-  const drinkFor = (i: number) => drinkListe[i % drinkListe.length];
+  const plan = drinkPlan(drinks, antallHull);
+  const drinkFor = (i: number) => plan[i];
 
   const brukt = new Set<string>([start.properties.id]);
   const hull: Hull[] = [
@@ -87,4 +87,17 @@ export function lagBane(
     current = valgt;
   }
   return hull;
+}
+
+/**
+ * Fordeler likte drinker på hullene i rekkefølge. Shot brukes maks én gang,
+ * og da på siste hull. Uten likte drinker blir det pils.
+ */
+export function drinkPlan(drinks: DrinkId[], antallHull: number): DrinkId[] {
+  const harShot = drinks.includes('shot');
+  const utenShot = drinks.filter((d) => d !== 'shot');
+  const liste: DrinkId[] = utenShot.length > 0 ? utenShot : ['pils'];
+  const plan = Array.from({ length: antallHull }, (_, i) => liste[i % liste.length]);
+  if (harShot && antallHull > 0) plan[antallHull - 1] = 'shot';
+  return plan;
 }
