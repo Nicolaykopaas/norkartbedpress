@@ -14,6 +14,7 @@ import { DrinkSwipe } from './DrinkSwipe';
 import { Spillere } from './Spillere';
 import { Scorekort } from './Scorekort';
 import { Leaderboard } from './Leaderboard';
+import { MatchSkjerm } from './MatchSkjerm';
 import { usePubgolf } from '../hooks/usePubgolf';
 import { finnDyresteStart, lagBane } from '../utils/bane';
 import { getBaneRute } from '../api/getBaneRute';
@@ -45,7 +46,7 @@ const ER_EKSEMPELDATA = BARER.features.some((f) =>
   f.properties.id.startsWith('eksempel-')
 );
 
-type Fase = 'swipe' | 'start' | 'spillere' | 'spill';
+type Fase = 'swipe' | 'match' | 'start' | 'spillere' | 'spill';
 type Oppsett = { fase: Fase; drinks: DrinkId[]; startId?: string };
 
 function lesOppsett(): Oppsett {
@@ -148,7 +149,16 @@ export const MapLibreMap = () => {
       case 'swipe':
         return (
           <DrinkSwipe
-            onFerdig={(drinks) => setOppsett({ fase: 'start', drinks })}
+            onFerdig={(drinks) => setOppsett({ fase: 'match', drinks })}
+          />
+        );
+      case 'match':
+        return (
+          <MatchSkjerm
+            drinks={oppsett.drinks}
+            antallHull={ANTALL_HULL}
+            onVidere={() => setOppsett((o) => ({ ...o, fase: 'start' }))}
+            onSwipePaNytt={() => setOppsett({ fase: 'swipe', drinks: [] })}
           />
         );
       case 'start':
