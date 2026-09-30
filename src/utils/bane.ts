@@ -75,7 +75,11 @@ export function lagBane(
     };
 
     let valgt: Bar | undefined;
-    for (let r = maksAvstand; r <= Math.max(maksRadius, maksAvstand); r += 200) {
+    for (
+      let r = maksAvstand;
+      r <= Math.max(maksRadius, maksAvstand);
+      r += 200
+    ) {
       valgt = velg(billigere, r);
       if (valgt) break;
     }
@@ -97,7 +101,50 @@ export function drinkPlan(drinks: DrinkId[], antallHull: number): DrinkId[] {
   const harShot = drinks.includes('shot');
   const utenShot = drinks.filter((d) => d !== 'shot');
   const liste: DrinkId[] = utenShot.length > 0 ? utenShot : ['pils'];
-  const plan = Array.from({ length: antallHull }, (_, i) => liste[i % liste.length]);
+  const plan = Array.from(
+    { length: antallHull },
+    (_, i) => liste[i % liste.length]
+  );
   if (harShot && antallHull > 0) plan[antallHull - 1] = 'shot';
   return plan;
+}
+
+/**
+ * Planlegger banen automatisk ut fra swipene: prøver hver bar som start og
+ * velger banen med kortest gangavstand, færrest prisøkninger og flest
+ * Guinness-barer på Guinness-hullene.
+ */
+export function lagBesteBane(
+  barer: Bar[],
+  drinks: DrinkId[],
+  opts: {
+    antallHull?: number;
+    maksAvstandMeter?: number;
+    maksRadiusMeter?: number;
+  } = {}
+): Hull[] {
+  const antallHull = opts.antallHull ?? 9;
+  let beste: Hull[] = [];
+  let besteScore = Infinity;
+  for (const start of barer) {
+    const bane = lagBane(start, barer, drinks, opts);
+    let score = (antallHull - bane.length) * 10000;
+    for (let i = 1; i < bane.length; i++) {
+      const a = bane[i - 1].bar;
+      const b = bane[i].bar;
+      score += haversineMeter(
+        a.geometry.coordinates as [number, number],
+        b.geometry.coordinates as [number, number]
+      );
+      if (b.properties.pris > a.properties.pris) score += 3000;
+    }
+    for (const h of bane) {
+      if (h.drink === 'guinness' && !h.bar.properties.guinness) score += 300;
+    }
+    if (score < besteScore) {
+      besteScore = score;
+      beste = bane;
+    }
+  }
+  return beste;
 }

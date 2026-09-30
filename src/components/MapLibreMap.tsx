@@ -16,9 +16,8 @@ import { Scorekort } from './Scorekort';
 import { Leaderboard } from './Leaderboard';
 import { MatchSkjerm } from './MatchSkjerm';
 import { usePubgolf } from '../hooks/usePubgolf';
-import { finnDyresteStart, lagBane } from '../utils/bane';
+import { lagBane, lagBesteBane } from '../utils/bane';
 import { getBaneRute } from '../api/getBaneRute';
-import { drinkById } from '../data/drinks';
 import type { Bar, BarCollection, DrinkId } from '../types/pubgolf';
 import olpriser from '../sample_data/olpriser.json';
 
@@ -46,7 +45,7 @@ const ER_EKSEMPELDATA = BARER.features.some((f) =>
   f.properties.id.startsWith('eksempel-')
 );
 
-type Fase = 'swipe' | 'match' | 'start' | 'spillere' | 'spill';
+type Fase = 'swipe' | 'match' | 'spillere' | 'spill';
 type Oppsett = { fase: Fase; drinks: DrinkId[]; startId?: string };
 
 function lesOppsett(): Oppsett {
@@ -54,10 +53,11 @@ function lesOppsett(): Oppsett {
     const raw = localStorage.getItem(OPPSETT_KEY);
     if (raw) {
       const o = JSON.parse(raw) as Oppsett;
+      if ((o.fase as string) === 'start') return { ...o, fase: 'match' };
       // En lagret runde kan peke på en bar som ikke finnes lenger (nye data)
       const finnes = BARER.features.some((b) => b.properties.id === o.startId);
       if ((o.fase === 'spillere' || o.fase === 'spill') && !finnes) {
-        return { fase: 'start', drinks: o.drinks ?? [] };
+        return { fase: 'match', drinks: o.drinks ?? [] };
       }
       return o;
     }
@@ -116,11 +116,20 @@ export const MapLibreMap = () => {
     setValgtBar(BARER.features.find((b) => b.properties.id === id));
   };
 
-  const startFra = (bar: Bar) => {
+  const planleggBane = () => {
+    const bane = lagBesteBane(BARER.features, oppsett.drinks, {
+      antallHull: ANTALL_HULL,
+    });
+    if (bane.length === 0) return;
+    const start = bane[0].bar;
     setValgtBar(undefined);
     setRute(undefined);
-    setOppsett((o) => ({ ...o, fase: 'spillere', startId: bar.properties.id }));
-    const [lng, lat] = bar.geometry.coordinates;
+    setOppsett((o) => ({
+      ...o,
+      fase: 'spillere',
+      startId: start.properties.id,
+    }));
+    const [lng, lat] = start.geometry.coordinates;
     setFlyTil([lng, lat]);
   };
 
@@ -165,41 +174,9 @@ export const MapLibreMap = () => {
           <MatchSkjerm
             drinks={oppsett.drinks}
             antallHull={ANTALL_HULL}
-            onVidere={() => setOppsett((o) => ({ ...o, fase: 'start' }))}
+            onVidere={planleggBane}
             onSwipePaNytt={() => setOppsett({ fase: 'swipe', drinks: [] })}
           />
-        );
-      case 'start':
-        return (
-          <Stack spacing={1.5}>
-            <Typography variant="h6">Hvor starter runden?</Typography>
-            <Typography variant="body2">
-              Klikk på en bar i kartet, eller start på den dyreste. Banen går
-              videre til stadig billigere pils.
-            </Typography>
-            <Stack direction="row" spacing={0.5} flexWrap="wrap" useFlexGap>
-              {oppsett.drinks.map((d) => (
-                <Chip
-                  key={d}
-                  size="small"
-                  label={`${drinkById(d).emoji} ${drinkById(d).navn}`}
-                />
-              ))}
-            </Stack>
-            <Button
-              variant="contained"
-              onClick={() => startFra(finnDyresteStart(BARER.features))}
-            >
-              Start på den dyreste 💸
-            </Button>
-            <Button
-              size="small"
-              onClick={() => setOppsett({ fase: 'swipe', drinks: [] })}
-            >
-              Swipe på nytt
-            </Button>
-            <PrisLegend barer={BARER} />
-          </Stack>
         );
       case 'spillere':
         return (
@@ -221,10 +198,11 @@ export const MapLibreMap = () => {
             />
             <Button
               size="small"
-              onClick={() => setOppsett((o) => ({ ...o, fase: 'start' }))}
+              onClick={() => setOppsett((o) => ({ ...o, fase: 'match' }))}
             >
-              ← Velg annen start
+              ← Tilbake
             </Button>
+            <PrisLegend barer={BARER} />
           </Stack>
         );
       case 'spill':
@@ -282,15 +260,6 @@ export const MapLibreMap = () => {
                 <Chip size="small" label="🍀 Guinness" />
               )}
             </Stack>
-            {oppsett.fase === 'start' && (
-              <Button
-                size="small"
-                variant="contained"
-                onClick={() => startFra(valgtBar)}
-              >
-                Start pubgolf herfra ⛳
-              </Button>
-            )}
           </Box>
         </RPopup>
       )}
@@ -348,7 +317,10 @@ const transformRequest: RequestTransformFunction = (url) => {
     return { url };
   }
 
-  const apiKey = (import.meta.env.VITE_API_KEY ?? '').replace(/[^A-Za-z0-9-]/g, '');
+  const apiKey = (import.meta.env.VITE_API_KEY ?? '').replace(
+    /[^A-Za-z0-9-]/g,
+    ''
+  );
   const separator = url.includes('?') ? '&' : '?';
   return { url: `${url}${separator}api_key=${encodeURIComponent(apiKey)}` };
 };
