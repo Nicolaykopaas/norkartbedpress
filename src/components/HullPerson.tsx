@@ -3,10 +3,9 @@ import { createPortal } from 'react-dom';
 import { spillLyd, snakk } from '../utils/lyd';
 import { Box, Typography } from '@mui/material';
 import { PROFILER } from '../data/profiler';
+import { DrinkAvatar } from './DrinkAvatar';
 import { drinkById } from '../data/drinks';
 import type { DrinkId } from '../types/pubgolf';
-
-const bildeUrl = (id: DrinkId) => `${import.meta.env.BASE_URL}drinks/${id}.png`;
 
 /** «Her lurer …»: tinder-matchen som venter på baren. */
 export function PersonKort({ drink }: { drink: DrinkId }) {
@@ -14,14 +13,9 @@ export function PersonKort({ drink }: { drink: DrinkId }) {
   const d = drinkById(drink);
   return (
     <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', minWidth: 200 }}>
-      <img
-        src={bildeUrl(drink)}
-        alt={p.profilnavn}
-        style={{ width: 56, height: 56, borderRadius: 12, objectFit: 'cover' }}
-        onError={(e) => {
-          e.currentTarget.style.display = 'none';
-        }}
-      />
+      <div style={{ width: 56, height: 56, flexShrink: 0 }}>
+        <DrinkAvatar id={drink} fyll />
+      </div>
       <Box>
         <Typography sx={{ fontSize: 12, opacity: 0.8 }}>Her lurer</Typography>
         <Typography sx={{ fontWeight: 900, lineHeight: 1.1 }}>
@@ -66,13 +60,9 @@ export function Reveal({
         <div className="reveal-topp">
           Hull {hullNr}: møt {p.profilnavn} her!
         </div>
-        <img
-          src={bildeUrl(drink)}
-          alt={p.profilnavn}
-          onError={(e) => {
-            e.currentTarget.style.display = 'none';
-          }}
-        />
+        <div className="reveal-bilde">
+          <DrinkAvatar id={drink} fyll />
+        </div>
         <div className="reveal-navn">
           {p.profilnavn}, {p.alder}
         </div>

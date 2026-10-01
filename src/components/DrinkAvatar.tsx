@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type { DrinkId } from '../types/pubgolf';
 import { PROFILER, type Profil } from '../data/profiler';
 
@@ -235,10 +234,8 @@ function Illustrasjon({ id }: { id: DrinkId }) {
   );
 }
 
-/** Viser public/drinks/<id>.jpg hvis den finnes, ellers en tegnet person. */
+/** Tegnet kompis (SVG). */
 export function DrinkAvatar({ id, fyll }: { id: DrinkId; fyll?: boolean }) {
-  const [feil, setFeil] = useState(false);
-  const bilde = `${import.meta.env.BASE_URL}drinks/${id}.png`;
   return (
     <div
       style={{
@@ -249,25 +246,10 @@ export function DrinkAvatar({ id, fyll }: { id: DrinkId; fyll?: boolean }) {
         margin: '0 auto',
         borderRadius: 12,
         overflow: 'hidden',
+        pointerEvents: 'none',
       }}
     >
-      {feil ? (
-        <Illustrasjon id={id} />
-      ) : (
-        <img
-          src={bilde}
-          alt={PROFILER[id].profilnavn}
-          draggable={false}
-          onError={() => setFeil(true)}
-          style={{
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-            pointerEvents: 'none',
-            display: 'block',
-          }}
-        />
-      )}
+      <Illustrasjon id={id} />
     </div>
   );
 }
