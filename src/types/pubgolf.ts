@@ -21,7 +21,6 @@ export type GrunnDrinkId =
   | 'cider'
   | 'seltzer'
   | 'shot'
-  | 'gintonic'
   | 'rodvin'
   | 'alkoholfri';
 

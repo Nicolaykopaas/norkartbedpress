@@ -90,17 +90,6 @@ const GRUNN_PROFILER: Record<GrunnDrinkId, Profil> = {
     glass: 'shot',
     drikke: '#e5e7eb',
   },
-  gintonic: {
-    profilnavn: 'Gin-Gina',
-    alder: 38,
-    bakgrunn: '#d9f99d',
-    hud: '#8d5a3b',
-    har: '#111827',
-    harStil: 'bolle',
-    genser: '#0f766e',
-    glass: 'highball',
-    drikke: '#ecfeff',
-  },
   rodvin: {
     profilnavn: 'Rødvin-Rolf',
     alder: 61,

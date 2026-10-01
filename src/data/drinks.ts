@@ -51,14 +51,6 @@ const GRUNN_DRINKS: Drink[] = [
       'Kort og brutal. Ingen forspill, ingen samtale, bare en dårlig idé som varer i to sekunder. Angrer sammen i morgen?',
   },
   {
-    id: 'gintonic',
-    navn: 'Gin & Tonic',
-    emoji: '🍋',
-    par: 3,
-    beskrivelse:
-      'Elegant, med agurk og alt. Har en mening om tonic og kommer til å dele den uoppfordret. Mer stil enn stabilitet.',
-  },
-  {
     id: 'rodvin',
     navn: 'Rødvin',
     emoji: '🍷',
