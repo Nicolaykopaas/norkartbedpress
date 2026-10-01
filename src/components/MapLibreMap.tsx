@@ -1,58 +1,75 @@
 import 'maplibre-gl/dist/maplibre-gl.css';
-import { RLayer, RMap, RSource, useMap } from 'maplibre-react-components';
+import {
+  RLayer,
+  RMap,
+  RPopup,
+  RSource,
+  useMap,
+} from 'maplibre-react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { FeatureCollection } from 'geojson';
-import { Button, Stack, Typography } from '@mui/material';
+import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { Overlay } from './Overlay';
 import { EVENTER } from '../data/events';
 import { GaaMarker, IntroGange } from './Gaa';
 import { KARTSTIL } from '../utils/kartstil';
 import { hentGangLinje, type Punkt } from '../utils/gange';
-import { PersonKort, Reveal } from './HullPerson';
-import { PROFILER } from '../data/profiler';
+import { Reveal } from './HullPerson';
 import { BaneLayer } from './BaneLayer';
-import { DrinkSwipe } from './DrinkSwipe';
-import { Spillere } from './Spillere';
-import { Scorekort } from './Scorekort';
-import { Leaderboard } from './Leaderboard';
-import { MatchSkjerm } from './MatchSkjerm';
-import { usePubgolf } from '../hooks/usePubgolf';
-import { haversineMeter, lagBane, lagBesteBane } from '../utils/bane';
+import { AktivitetMarkers } from './AktivitetMarkers';
+import { Kategorivelger } from './Kategorivelger';
+import { StoppKort } from './StoppKort';
+import { Oppsummering } from './Oppsummering';
+import { useTur } from '../hooks/useTur';
+import { haversineMeter, lagBesteTur } from '../utils/bane';
 import { getBaneRute } from '../api/getBaneRute';
-import type { Bar, BarCollection, DrinkId } from '../types/pubgolf';
-import steder from '../sample_data/steder.json';
+import { kategoriById } from '../data/kategorier';
+import type { Hull, KategoriId, Sted, StedCollection } from '../types/pubgolf';
+import aktiviteter from '../sample_data/aktiviteter.json';
 
 // Torvet, midt i Midtbyen
-const TRONDHEIM_COORDS: [number, number] = [10.39506, 63.43049];
+const TRONDHEIM_COORDS: Punkt = [10.39506, 63.43049];
 
-// Man sveiper til man har 7 matcher, og hver match blir ett hull
-const ANTALL_HULL = 7;
-const OPPSETT_KEY = 'byvandring-oppsett-v1';
-const BARER = steder as BarCollection;
-const SAMFUNDET: Punkt = (BARER.features.find(
-  (b) => b.properties.id === 'samfundet'
+const ANTALL_STOPP = 7;
+const OPPSETT_KEY = 'byvandring-oppsett-v2';
+const STEDER = aktiviteter as StedCollection;
+const SAMFUNDET: Punkt = (STEDER.features.find(
+  (s) => s.properties.id === 'samfundet'
 )?.geometry.coordinates as Punkt | undefined) ?? [10.3942, 63.4225];
 
-type Fase = 'swipe' | 'match' | 'spillere' | 'spill';
-type Oppsett = { fase: Fase; drinks: DrinkId[]; startId?: string };
+const ANTALL_PER_KATEGORI = STEDER.features.reduce<
+  Partial<Record<KategoriId, number>>
+>((acc, s) => {
+  acc[s.properties.kategori] = (acc[s.properties.kategori] ?? 0) + 1;
+  return acc;
+}, {});
+
+type Fase = 'velg' | 'oversikt' | 'tur';
+type Oppsett = {
+  fase: Fase;
+  kategorier: KategoriId[];
+  /** Kategorier som er skrudd av i oversikten */
+  skjult: KategoriId[];
+  turIds: string[];
+};
+
+const TOMT: Oppsett = { fase: 'velg', kategorier: [], skjult: [], turIds: [] };
 
 function lesOppsett(): Oppsett {
   try {
     const raw = localStorage.getItem(OPPSETT_KEY);
     if (raw) {
       const o = JSON.parse(raw) as Oppsett;
-      if ((o.fase as string) === 'start') return { ...o, fase: 'match' };
-      // En lagret runde kan peke på en bar som ikke finnes lenger (nye data)
-      const finnes = BARER.features.some((b) => b.properties.id === o.startId);
-      if ((o.fase === 'spillere' || o.fase === 'spill') && !finnes) {
-        return { fase: 'match', drinks: o.drinks ?? [] };
-      }
-      return o;
+      const ids = new Set(STEDER.features.map((s) => s.properties.id));
+      if (o.fase === 'tur' && !o.turIds?.every((id) => ids.has(id)))
+        return TOMT;
+      if (o.fase === 'oversikt' && !o.kategorier?.length) return TOMT;
+      return { ...TOMT, ...o };
     }
   } catch {
     /* ignorer */
   }
-  return { fase: 'swipe', drinks: [] };
+  return TOMT;
 }
 
 export const MapLibreMap = () => {
@@ -60,8 +77,9 @@ export const MapLibreMap = () => {
   const [rute, setRute] = useState<
     { geometri: FeatureCollection; totalSekunder?: number } | undefined
   >(undefined);
-  const [flyTil, setFlyTil] = useState<[number, number] | undefined>(undefined);
-  const spill = usePubgolf(ANTALL_HULL);
+  const [flyTil, setFlyTil] = useState<{ pos: Punkt; zoom: number }>();
+  const [valgtSted, setValgtSted] = useState<Sted>();
+  const tur = useTur(ANTALL_STOPP);
 
   useEffect(() => {
     try {
@@ -71,17 +89,15 @@ export const MapLibreMap = () => {
     }
   }, [oppsett]);
 
-  const startBar = BARER.features.find(
-    (b) => b.properties.id === oppsett.startId
-  );
-  const hull = useMemo(
+  const hull: Hull[] = useMemo(
     () =>
-      startBar
-        ? lagBane(startBar, BARER.features, oppsett.drinks, {
-            antallHull: ANTALL_HULL,
-          })
-        : [],
-    [startBar, oppsett.drinks]
+      oppsett.turIds.flatMap((id, i) => {
+        const sted = STEDER.features.find((s) => s.properties.id === id);
+        return sted
+          ? [{ nr: i + 1, sted, kategori: sted.properties.kategori }]
+          : [];
+      }),
+    [oppsett.turIds]
   );
 
   useEffect(() => {
@@ -95,91 +111,111 @@ export const MapLibreMap = () => {
     };
   }, [hull]);
 
-  const planleggBane = () => {
-    const bane = lagBesteBane(BARER.features, oppsett.drinks, {
-      antallHull: ANTALL_HULL,
-      startSenter: TRONDHEIM_COORDS,
-    });
+  const synlige = useMemo(
+    () =>
+      STEDER.features.filter(
+        (s) =>
+          oppsett.kategorier.includes(s.properties.kategori) &&
+          !oppsett.skjult.includes(s.properties.kategori)
+      ),
+    [oppsett.kategorier, oppsett.skjult]
+  );
+
+  const [intro, setIntro] = useState<'gaar' | 'ferdig'>('ferdig');
+  const [revealHull, setRevealHull] = useState<number>();
+  const [leg, setLeg] = useState<Punkt[]>();
+  const [lukkedeEventer, setLukkedeEventer] = useState<string[]>([]);
+  const [eventKlar, setEventKlar] = useState(false);
+
+  const planlegg = () => {
+    const aktive = oppsett.kategorier.filter(
+      (k) => !oppsett.skjult.includes(k)
+    );
+    const bruk = aktive.length > 0 ? aktive : oppsett.kategorier;
+    const bane = lagBesteTur(
+      STEDER.features,
+      bruk,
+      ANTALL_STOPP,
+      TRONDHEIM_COORDS
+    );
     if (bane.length === 0) return;
-    const start = bane[0].bar;
+    tur.nullstill();
     setRute(undefined);
+    setValgtSted(undefined);
+    setIntro('gaar');
     setOppsett((o) => ({
       ...o,
-      fase: 'spillere',
-      startId: start.properties.id,
+      fase: 'tur',
+      turIds: bane.map((h) => h.sted.properties.id),
     }));
-    const [lng, lat] = start.geometry.coordinates;
-    setFlyTil([lng, lat]);
   };
 
-  const nyRunde = () => {
-    spill.nullstill();
+  const nyTur = () => {
+    tur.nullstill();
     setRute(undefined);
     setIntro('ferdig');
     setLeg(undefined);
-    setOppsett({ fase: 'swipe', drinks: [] });
+    setValgtSted(undefined);
+    setOppsett(TOMT);
   };
 
-  const visHull = (idx: number) => {
-    spill.settHull(idx);
-    const [lng, lat] = hull[idx].bar.geometry.coordinates;
-    setFlyTil([lng, lat]);
-  };
+  const iTur = oppsett.fase === 'tur';
+  const aktivtHullNr = tur.aktivtHull;
+  const aktivSted = iTur && !tur.ferdig ? hull[aktivtHullNr]?.sted : undefined;
 
-  // Følg aktivt hull på kartet når man blar i scorekortet
-  const aktivBar =
-    oppsett.fase === 'spill' ? hull[spill.aktivtHull]?.bar : undefined;
+  // Følg aktivt stopp på kartet
   useEffect(() => {
-    if (aktivBar) setFlyTil(aktivBar.geometry.coordinates as [number, number]);
-  }, [aktivBar]);
+    if (aktivSted)
+      setFlyTil({ pos: aktivSted.geometry.coordinates as Punkt, zoom: 15.5 });
+  }, [aktivSted]);
 
-  const kunTinder = oppsett.fase === 'swipe' || oppsett.fase === 'match';
+  // Oversikten: vis hele byen når man kommer inn
+  useEffect(() => {
+    if (oppsett.fase === 'oversikt')
+      setFlyTil({ pos: TRONDHEIM_COORDS, zoom: 14.3 });
+  }, [oppsett.fase]);
 
-  const [lukkedeEventer, setLukkedeEventer] = useState<string[]>([]);
-  // Gåanimasjon fra Samfundet etter at man har trykket play
-  const [intro, setIntro] = useState<'gaar' | 'ferdig'>('ferdig');
-  const [revealHull, setRevealHull] = useState<number>();
-  // Special event dukker opp litt ut i runden, ikke med en gang
-  const [eventKlar, setEventKlar] = useState(false);
-  const aktivtHullNr = spill.aktivtHull;
+  // Bonusoppdrag dukker opp litt ut i turen, ikke med en gang
   useEffect(() => {
     setEventKlar(false);
-    if (oppsett.fase !== 'spill' || intro !== 'ferdig' || aktivtHullNr < 2)
-      return;
+    if (!iTur || intro !== 'ferdig' || tur.ferdig || aktivtHullNr < 2) return;
     const t = setTimeout(() => setEventKlar(true), 4000);
     return () => clearTimeout(t);
-  }, [aktivtHullNr, oppsett.fase, intro]);
+  }, [aktivtHullNr, iTur, intro, tur.ferdig]);
+
+  // Avsløring ved hvert nye stopp
   useEffect(() => {
-    if (oppsett.fase === 'spill' && intro === 'ferdig')
-      setRevealHull(aktivtHullNr);
+    if (iTur && intro === 'ferdig' && !tur.ferdig) setRevealHull(aktivtHullNr);
     else setRevealHull(undefined);
-  }, [aktivtHullNr, oppsett.fase, intro]);
-  // Kun etappen til neste bar tegnes, ikke hele ruten på en gang
-  const [leg, setLeg] = useState<Punkt[]>();
+  }, [aktivtHullNr, iTur, intro, tur.ferdig]);
+
+  // Kun etappen til neste stopp tegnes, ikke hele ruten på en gang
   useEffect(() => {
     setLeg(undefined);
-    if (oppsett.fase !== 'spill' || intro !== 'ferdig' || aktivtHullNr < 1)
-      return;
+    if (!iTur || intro !== 'ferdig' || tur.ferdig || aktivtHullNr < 1) return;
+    const forrige = hull[aktivtHullNr - 1];
+    const naa = hull[aktivtHullNr];
+    if (!forrige || !naa) return;
     let avbrutt = false;
     hentGangLinje(
-      hull[aktivtHullNr - 1].bar.geometry.coordinates as Punkt,
-      hull[aktivtHullNr].bar.geometry.coordinates as Punkt
+      forrige.sted.geometry.coordinates as Punkt,
+      naa.sted.geometry.coordinates as Punkt
     ).then((l) => {
       if (!avbrutt) setLeg(l);
     });
     return () => {
       avbrutt = true;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [aktivtHullNr, oppsett.fase, intro, hull.length]);
+  }, [aktivtHullNr, iTur, intro, tur.ferdig, hull]);
+
   const naerEvent =
-    aktivBar && eventKlar
+    aktivSted && eventKlar
       ? EVENTER.map((e) => ({
           e,
           m: Math.round(
             haversineMeter(
               [e.lng, e.lat],
-              aktivBar.geometry.coordinates as [number, number]
+              aktivSted.geometry.coordinates as Punkt
             )
           ),
         }))
@@ -187,131 +223,172 @@ export const MapLibreMap = () => {
           .sort((a, b) => a.m - b.m)[0]
       : undefined;
 
-  const panel = (() => {
-    if (spill.ferdig && hull.length > 0) {
-      return (
-        <Leaderboard
-          hull={hull}
-          spillere={spill.spillere}
-          onNyRunde={nyRunde}
-        />
-      );
-    }
-    switch (oppsett.fase) {
-      case 'swipe':
-        return (
-          <DrinkSwipe
-            onFerdig={(drinks) => setOppsett({ fase: 'match', drinks })}
-          />
-        );
-      case 'match':
-        return (
-          <MatchSkjerm
-            drinks={oppsett.drinks}
-            antallHull={ANTALL_HULL}
-            onVidere={planleggBane}
-            onSwipePaNytt={() => setOppsett({ fase: 'swipe', drinks: [] })}
-          />
-        );
-      case 'spillere':
-        return (
-          <Stack spacing={1}>
-            <Typography variant="body2">
-              Banen: {hull.length} hull, par{' '}
-              {hull.reduce((s, h) => s + h.par, 0)}
-              {rute?.totalSekunder !== undefined &&
-                ` · ca. ${Math.round(rute.totalSekunder / 60)} min`}
-            </Typography>
-            <Spillere
-              spillere={spill.spillere}
-              onLeggTil={spill.leggTilSpiller}
-              onFjern={spill.fjernSpiller}
-              onStart={() => {
-                setOppsett((o) => ({ ...o, fase: 'spill' }));
-                spill.settHull(0);
-                setIntro('gaar');
-              }}
-            />
-            <Button
-              size="small"
-              onClick={() => setOppsett((o) => ({ ...o, fase: 'match' }))}
-            >
-              ← Tilbake
-            </Button>
-          </Stack>
-        );
-      case 'spill':
-        if (intro === 'gaar') {
-          const d = hull[0].drink;
-          return (
-            <Stack spacing={1} sx={{ p: 1 }}>
-              <Typography sx={{ fontSize: 20, fontWeight: 900 }}>
-                🚶 På vei fra Samfundet til {hull[0].bar.properties.navn}…
-              </Typography>
-              <PersonKort drink={d} />
-              <Typography sx={{ fontSize: 13, opacity: 0.8 }}>
-                {PROFILER[d].profilnavn} sitter allerede og venter.
-              </Typography>
-              <Button variant="outlined" onClick={() => setIntro('ferdig')}>
-                Hopp over
-              </Button>
-            </Stack>
-          );
-        }
-        return (
-          <Scorekort
-            hull={hull}
-            spill={spill}
-            totalSekunder={rute?.totalSekunder}
-            onVisHull={visHull}
-          />
-        );
-    }
-  })();
-
-  if (kunTinder) {
+  if (oppsett.fase === 'velg') {
     return (
       <div className="start-skjerm">
         <div className="start-kort">
-          {panel}
-          <Button
-            fullWidth
-            color="secondary"
-            onClick={nyRunde}
-            sx={{ mt: 1, height: 48, fontWeight: 900 }}
-          >
-            ↺ Restart
-          </Button>
+          <Kategorivelger
+            antall={ANTALL_PER_KATEGORI}
+            onFerdig={(k) =>
+              setOppsett({
+                fase: 'oversikt',
+                kategorier: k,
+                skjult: [],
+                turIds: [],
+              })
+            }
+          />
         </div>
       </div>
     );
   }
 
+  const panel = (() => {
+    if (oppsett.fase === 'oversikt') {
+      return (
+        <Stack spacing={1} sx={{ p: 0.5 }}>
+          <Typography sx={{ fontSize: 20, fontWeight: 900 }}>
+            Aktiviteter i byen 🗺️
+          </Typography>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.75 }}>
+            {oppsett.kategorier.map((id) => {
+              const k = kategoriById(id);
+              const av = oppsett.skjult.includes(id);
+              return (
+                <Chip
+                  key={id}
+                  onClick={() =>
+                    setOppsett((o) => ({
+                      ...o,
+                      skjult: av
+                        ? o.skjult.filter((x) => x !== id)
+                        : [...o.skjult, id],
+                    }))
+                  }
+                  label={`${k.emoji} ${k.navn} ${ANTALL_PER_KATEGORI[id] ?? 0}`}
+                  sx={{
+                    height: 40,
+                    fontSize: 15,
+                    fontWeight: 700,
+                    opacity: av ? 0.4 : 1,
+                    border: `2px solid ${k.farge}`,
+                    background: av ? 'transparent' : `${k.farge}55`,
+                  }}
+                />
+              );
+            })}
+          </Box>
+          <Button
+            fullWidth
+            variant="contained"
+            color="success"
+            onClick={planlegg}
+            sx={{ height: 60, fontSize: 20, fontWeight: 900 }}
+          >
+            Planlegg tur 🚶 ({ANTALL_STOPP} stopp)
+          </Button>
+          <Button
+            color="inherit"
+            onClick={() => setOppsett({ ...TOMT })}
+            sx={{ opacity: 0.8 }}
+          >
+            ← Endre valg
+          </Button>
+        </Stack>
+      );
+    }
+    if (intro === 'gaar' && hull[0]) {
+      const kat = kategoriById(hull[0].kategori);
+      return (
+        <Stack spacing={1} sx={{ p: 1 }}>
+          <Typography sx={{ fontSize: 20, fontWeight: 900 }}>
+            🚶 På vei fra Samfundet til {hull[0].sted.properties.navn}…
+          </Typography>
+          <Typography sx={{ fontSize: 15 }}>
+            {kat.emoji} Her skal du {kat.gjor}.
+          </Typography>
+          <Button variant="outlined" onClick={() => setIntro('ferdig')}>
+            Hopp over
+          </Button>
+        </Stack>
+      );
+    }
+    if (tur.ferdig) {
+      return (
+        <Oppsummering
+          hull={hull}
+          tur={tur}
+          totalSekunder={rute?.totalSekunder}
+          onNyTur={nyTur}
+        />
+      );
+    }
+    return (
+      <StoppKort hull={hull} tur={tur} totalSekunder={rute?.totalSekunder} />
+    );
+  })();
+
+  const synligeHull = tur.ferdig
+    ? hull.length
+    : intro === 'gaar'
+      ? 0
+      : tur.aktivtHull + 1;
+
   return (
     <RMap
       minZoom={6}
       initialCenter={TRONDHEIM_COORDS}
-      initialZoom={15}
+      initialZoom={14.3}
       initialPitch={50}
       maxPitch={75}
       mapStyle={KARTSTIL}
       style={{
         height: `calc(100dvh - var(--header-height))`,
       }}
+      onClick={() => setValgtSted(undefined)}
     >
-      {hull.length > 0 && (
+      {oppsett.fase === 'oversikt' && (
+        <AktivitetMarkers
+          steder={synlige}
+          valgtId={valgtSted?.properties.id}
+          onVelg={setValgtSted}
+        />
+      )}
+      {oppsett.fase === 'oversikt' && valgtSted && (
+        <RPopup
+          longitude={valgtSted.geometry.coordinates[0]}
+          latitude={valgtSted.geometry.coordinates[1]}
+          offset={26}
+        >
+          <Box sx={{ minWidth: 170, maxWidth: 240, color: '#111' }}>
+            <Typography sx={{ fontWeight: 900, fontSize: 15, color: '#111' }}>
+              {kategoriById(valgtSted.properties.kategori).emoji}{' '}
+              {valgtSted.properties.navn}
+            </Typography>
+            <Typography sx={{ fontSize: 13, color: '#333' }}>
+              {kategoriById(valgtSted.properties.kategori).navn}
+              {' · '}
+              {Math.round(
+                haversineMeter(
+                  TRONDHEIM_COORDS,
+                  valgtSted.geometry.coordinates as Punkt
+                ) / 10
+              ) * 10}{' '}
+              m fra Torvet
+            </Typography>
+            <Typography sx={{ fontSize: 13, mt: 0.5, color: '#333' }}>
+              {valgtSted.properties.fakta ??
+                kategoriById(valgtSted.properties.kategori).fakta}
+            </Typography>
+          </Box>
+        </RPopup>
+      )}
+      {iTur && hull.length > 0 && (
         <BaneLayer
-          // Kun én og én bar: de vi har besøkt og den vi er på nå
-          hull={hull.slice(
-            0,
-            oppsett.fase === 'spill'
-              ? intro === 'gaar'
-                ? 0
-                : spill.aktivtHull + 1
-              : 1
-          )}
-          aktivtHull={oppsett.fase === 'spill' ? spill.aktivtHull : undefined}
-          onVelgHull={visHull}
+          // Kun ett og ett stopp: de vi har vært på og det vi er på nå
+          hull={hull.slice(0, synligeHull)}
+          aktivtHull={tur.ferdig ? undefined : tur.aktivtHull}
+          onVelgHull={tur.settHull}
         />
       )}
       {leg && (
@@ -345,14 +422,16 @@ export const MapLibreMap = () => {
           />
         </>
       )}
-      {oppsett.fase === 'spill' && intro === 'gaar' && hull.length > 0 && (
+      {iTur && intro === 'gaar' && hull.length > 0 && (
         <IntroGange
           fra={SAMFUNDET}
-          til={hull[0].bar.geometry.coordinates as Punkt}
+          til={hull[0].sted.geometry.coordinates as Punkt}
           onFerdig={() => setIntro('ferdig')}
         />
       )}
-      {flyTil && <MapFlyTo lng={flyTil[0]} lat={flyTil[1]} />}
+      {flyTil && (
+        <MapFlyTo lng={flyTil.pos[0]} lat={flyTil.pos[1]} zoom={flyTil.zoom} />
+      )}
       {naerEvent && (
         <div className="gta">
           <div className="gta-banner">
@@ -379,15 +458,14 @@ export const MapLibreMap = () => {
       )}
       {revealHull !== undefined && hull[revealHull] && (
         <Reveal
-          drink={hull[revealHull].drink}
-          hullNr={hull[revealHull].nr}
+          hull={hull[revealHull]}
           onLukk={() => setRevealHull(undefined)}
         />
       )}
       <Button
         variant="contained"
         color="primary"
-        onClick={nyRunde}
+        onClick={nyTur}
         sx={{
           position: 'absolute',
           top: 12,
@@ -401,12 +479,11 @@ export const MapLibreMap = () => {
         ↺ Restart
       </Button>
       <Overlay
-        className={kunTinder ? 'panel-midt' : 'panel-bunn'}
+        className="panel-bunn"
         style={{
           position: 'absolute',
-          top: kunTinder ? '50%' : 12,
-          left: kunTinder ? '50%' : 12,
-          transform: kunTinder ? 'translate(-50%, -50%)' : undefined,
+          top: 12,
+          left: 12,
           zIndex: 1,
           width: 'min(360px, calc(100vw - 48px))',
           maxHeight: 'calc(100% - 24px)',
@@ -415,15 +492,13 @@ export const MapLibreMap = () => {
         }}
       >
         <div className="pubgolf-panel">{panel}</div>
-
-        {!kunTinder && oppsett.fase !== 'spill' && (
+        {oppsett.fase === 'oversikt' && (
           <Typography
             variant="caption"
             component="p"
             sx={{ mt: 1, color: 'text.secondary' }}
           >
-            Kart: © Esri, OpenStreetMap-bidragsytere (OpenFreeMap). Terreng:
-            AWS. Rute: OSRM
+            Steder: © OpenStreetMap-bidragsytere. Kart: Esri, OpenFreeMap.
           </Typography>
         )}
       </Overlay>
@@ -431,19 +506,27 @@ export const MapLibreMap = () => {
   );
 };
 
-function MapFlyTo({ lng, lat }: { lng: number; lat: number }) {
+function MapFlyTo({
+  lng,
+  lat,
+  zoom,
+}: {
+  lng: number;
+  lat: number;
+  zoom: number;
+}) {
   const map = useMap();
 
   useEffect(() => {
     const mobil = window.matchMedia('(max-width: 600px)').matches;
     map.flyTo({
       center: [lng, lat],
-      zoom: 15.5,
+      zoom,
       speed: 1.5,
       // Panelet ligger nederst på mobil, så flytt midten opp
       padding: { top: 0, left: 0, right: 0, bottom: mobil ? 320 : 0 },
     });
-  }, [lng, lat, map]);
+  }, [lng, lat, zoom, map]);
 
   return null;
 }

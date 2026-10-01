@@ -1,0 +1,132 @@
+[
+ {
+  "id": "torvet",
+  "navn": "Torvet med Olav Tryggvason",
+  "kategori": "se",
+  "pos": [
+   10.39506,
+   63.43049
+  ],
+  "fakta": "Byen ble grunnlagt her i år 997. Se opp på statuen på toppen av søylen."
+ },
+ {
+  "id": "nidarosdomen",
+  "navn": "Nidarosdomen",
+  "kategori": "se",
+  "pos": [
+   10.3969,
+   63.4269
+  ],
+  "fakta": "Nord-Europas største middelalderkirke. Se etter de mange figurene på vestfronten."
+ },
+ {
+  "id": "gamle-bybro",
+  "navn": "Gamle Bybro",
+  "kategori": "se",
+  "pos": [
+   10.4017,
+   63.42846
+  ],
+  "fakta": "Kalles Lykkens portal. Gå gjennom og si et ønske."
+ },
+ {
+  "id": "kristiansten",
+  "navn": "Kristiansten festning",
+  "kategori": "se",
+  "pos": [
+   10.4112,
+   63.4283
+  ],
+  "fakta": "Her stoppet svenskene i 1718. Fra festningen ser du hele byen."
+ },
+ {
+  "id": "ravnkloa",
+  "navn": "Ravnkloa",
+  "kategori": "se",
+  "pos": [
+   10.3928,
+   63.434
+  ],
+  "fakta": "Fisketorget ved kanalen. Herfra går båten til Munkholmen."
+ },
+ {
+  "id": "stiftsgarden",
+  "navn": "Stiftsgården",
+  "kategori": "se",
+  "pos": [
+   10.3954,
+   63.4297
+  ],
+  "fakta": "Skandinavias største tre-slott, og kongefamiliens bolig i Trondheim."
+ },
+ {
+  "id": "kjopmannsgata",
+  "navn": "Kjøpmannsgata",
+  "kategori": "se",
+  "pos": [
+   10.403,
+   63.4319
+  ],
+  "fakta": "Gamle varelagre langs elva, som står tett i tett på hver sin påle."
+ },
+ {
+  "id": "samfundet",
+  "navn": "Studentersamfundet",
+  "kategori": "se",
+  "pos": [
+   10.3942,
+   63.4225
+  ],
+  "fakta": "Det røde runde huset der studentene lager festival, teater og revy."
+ },
+ {
+  "id": "sentralstasjon",
+  "navn": "Trondheim sentralstasjon",
+  "kategori": "se",
+  "pos": [
+   10.4,
+   63.436
+  ],
+  "fakta": "Herfra tar du toget til både Oslo og Bodø."
+ },
+ {
+  "id": "rockheim",
+  "navn": "Rockheim",
+  "kategori": "se",
+  "pos": [
+   10.4023,
+   63.439
+  ],
+  "fakta": "Nasjonalt museum for pop og rock. Her kan du prøve instrumentene selv."
+ },
+ {
+  "id": "bakklandet",
+  "navn": "Bakklandet",
+  "kategori": "se",
+  "pos": [
+   10.404,
+   63.429
+  ],
+  "fakta": "Fargerike trehus og trange gater, med kafeer i hvert hjørne."
+ },
+ {
+  "id": "midtbyrunden",
+  "navn": "Midtbyrunden",
+  "kategori": "tur",
+  "pos": [
+   10.3991,
+   63.4255
+  ],
+  "fakta": "En merket byvandring gjennom sentrum. Følg skiltene og les om stedene du går forbi."
+ },
+ {
+  "id": "ladestien",
+  "navn": "Ladestien (Ladehammeren)",
+  "kategori": "tur",
+  "pos": [
+   10.4674,
+   63.4448
+  ],
+  "fakta": "Turstien langs fjorden fra Ladehammeren. Fin for en lang tur med utsikt over Trondheimsfjorden."
+ }
+]

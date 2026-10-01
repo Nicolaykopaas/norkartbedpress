@@ -1,54 +1,46 @@
 import type { Feature, FeatureCollection, Point } from 'geojson';
 
-export type BarProps = {
+export type KategoriId =
+  | 'se'
+  | 'tur'
+  | 'park'
+  | 'lekeplass'
+  | 'museum'
+  | 'scene'
+  | 'kino'
+  | 'is'
+  | 'bowling'
+  | 'badstue'
+  | 'bading'
+  | 'utsikt'
+  | 'spill';
+
+export type Kategori = {
+  id: KategoriId;
+  navn: string;
+  emoji: string;
+  /** Farge på ikonet i kartet */
+  farge: string;
+  /** Hva du gjør her, brukt i «Her skal du …» */
+  gjor: string;
+  /** Standardtekst når stedet ikke har egen fakta */
+  fakta: string;
+};
+
+export type StedProps = {
   id: string;
   navn: string;
-  /** Ubrukt i familieversjonen (alltid 0) */
-  pris: number;
-  happyHour: boolean;
-  bydel: string;
-  emoji?: string;
+  kategori: KategoriId;
   /** Kort morsom fakta om stedet */
   fakta?: string;
 };
 
-export type Bar = Feature<Point, BarProps>;
-export type BarCollection = FeatureCollection<Point, BarProps>;
+export type Sted = Feature<Point, StedProps>;
+export type StedCollection = FeatureCollection<Point, StedProps>;
 
-export type DrinkId =
-  | 'kakao'
-  | 'eplejuice'
-  | 'smoothie'
-  | 'limonade'
-  | 'appelsinbrus'
-  | 'iste'
-  | 'melk'
-  | 'saft'
-  | 'mineralvann'
-  | 'mocktail'
-  | 'sjokolade'
-  | 'cola';
-
-export type Drink = {
-  id: DrinkId;
-  navn: string;
-  emoji: string;
-  /** Anbefalt antall slurker */
-  par: number;
-  beskrivelse: string;
-};
-
+/** Ett stopp på turen */
 export type Hull = {
   nr: number;
-  bar: Bar;
-  drink: DrinkId;
-  par: number;
-};
-
-export type Spiller = {
-  navn: string;
-  /** slurker per hull (indeks = hull nr - 1), undefined = ikke spilt */
-  slurker: (number | undefined)[];
-  /** split the G per hull */
-  splitTheG: boolean[];
+  sted: Sted;
+  kategori: KategoriId;
 };

@@ -1,5 +1,4 @@
-import type { Bar, DrinkId, Hull } from '../types/pubgolf';
-import { parFor } from '../data/drinks';
+import type { Hull, KategoriId, Sted } from '../types/pubgolf';
 
 export function haversineMeter(
   a: [number, number],
@@ -15,141 +14,96 @@ export function haversineMeter(
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-const pos = (b: Bar) => b.geometry.coordinates as [number, number];
+const pos = (s: Sted) => s.geometry.coordinates as [number, number];
 
-/** Dyreste bar er best startpunkt siden prisen kun kan gå nedover. */
-export function finnDyresteStart(barer: Bar[]): Bar {
-  return barer.reduce((best, b) =>
-    b.properties.pris > best.properties.pris ? b : best
-  );
+function stokk<T>(liste: T[]): T[] {
+  const a = [...liste];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
 }
 
-export function lagBane(
-  start: Bar,
-  barer: Bar[],
-  drinks: DrinkId[],
-  opts: {
-    antallHull?: number;
-    maksAvstandMeter?: number;
-    maksRadiusMeter?: number;
-  } = {}
+/** Fordeler valgte kategorier på stoppene, så det blir variasjon. */
+function kategoriPlan(
+  kategorier: KategoriId[],
+  antall: number,
+  rekkefolge: KategoriId[]
+): KategoriId[] {
+  const liste = rekkefolge.length > 0 ? rekkefolge : kategorier;
+  return Array.from({ length: antall }, (_, i) => liste[i % liste.length]);
+}
+
+/**
+ * Lager en tur: for hvert stopp velges nærmeste ledige sted i den kategorien
+ * som står for tur, målt fra forrige stopp.
+ */
+export function lagTur(
+  steder: Sted[],
+  kategorier: KategoriId[],
+  antall: number,
+  start: [number, number],
+  rekkefolge: KategoriId[] = kategorier
 ): Hull[] {
-  const antallHull = opts.antallHull ?? 9;
-  const maksAvstand = opts.maksAvstandMeter ?? 800;
-  const maksRadius = opts.maksRadiusMeter ?? 1500;
-  const plan = drinkPlan(drinks, antallHull);
-  const drinkFor = (i: number) => plan[i];
+  const plan = kategoriPlan(kategorier, antall, rekkefolge);
+  const brukt = new Set<string>();
+  const hull: Hull[] = [];
+  let naa = start;
 
-  const brukt = new Set<string>([start.properties.id]);
-  const hull: Hull[] = [
-    { nr: 1, bar: start, drink: drinkFor(0), par: parFor(drinkFor(0)) },
-  ];
-  let current = start;
+  for (let i = 0; i < antall; i++) {
+    const onsket = plan[i];
+    const velg = (liste: Sted[]) =>
+      liste
+        .filter((s) => !brukt.has(s.properties.id))
+        .map((s) => ({ s, d: haversineMeter(naa, pos(s)) }))
+        .sort((a, b) => a.d - b.d)[0]?.s;
 
-  for (let i = 1; i < antallHull; i++) {
-    const drink = drinkFor(i);
-    const ledige = barer.filter((b) => !brukt.has(b.properties.id));
-    if (ledige.length === 0) break;
-
-    const medAvstand = ledige.map((b) => ({
-      b,
-      d: haversineMeter(pos(current), pos(b)),
-    }));
-    const billigere = medAvstand.filter(
-      (x) => x.b.properties.pris <= current.properties.pris
-    );
-
-    const velg = (
-      liste: { b: Bar; d: number }[],
-      radius: number
-    ): Bar | undefined => {
-      const inne = liste.filter((x) => x.d <= radius);
-      inne.sort(
-        (a, b) => a.d - b.d || a.b.properties.pris - b.b.properties.pris
-      );
-      return inne[0]?.b;
-    };
-
-    let valgt: Bar | undefined;
-    for (
-      let r = maksAvstand;
-      r <= Math.max(maksRadius, maksAvstand);
-      r += 200
-    ) {
-      valgt = velg(billigere, r);
-      if (valgt) break;
-    }
-    if (!valgt) valgt = velg(medAvstand, Infinity);
+    const valgt =
+      velg(steder.filter((s) => s.properties.kategori === onsket)) ??
+      velg(steder.filter((s) => kategorier.includes(s.properties.kategori)));
     if (!valgt) break;
 
     brukt.add(valgt.properties.id);
-    hull.push({ nr: i + 1, bar: valgt, drink, par: parFor(drink) });
-    current = valgt;
+    hull.push({
+      nr: hull.length + 1,
+      sted: valgt,
+      kategori: valgt.properties.kategori,
+    });
+    naa = pos(valgt);
   }
   return hull;
 }
 
-/**
- * Fordeler likte drinker på stoppene i rekkefølge. Uten likte drinker blir det kakao.
- */
-export function drinkPlan(drinks: DrinkId[], antallHull: number): DrinkId[] {
-  const liste: DrinkId[] = drinks.length > 0 ? drinks : ['kakao'];
-  return Array.from({ length: antallHull }, (_, i) => liste[i % liste.length]);
+function turLengde(hull: Hull[], start: [number, number]): number {
+  let sum = 0;
+  let forrige = start;
+  for (const h of hull) {
+    sum += haversineMeter(forrige, pos(h.sted));
+    forrige = pos(h.sted);
+  }
+  return sum;
 }
 
 /**
- * Planlegger banen automatisk ut fra swipene: prøver hver bar som start og
- * velger banen med kortest gangavstand.
+ * Prøver mange rekkefølger av kategoriene og velger turen med kortest
+ * samlet gangavstand.
  */
-export function lagBesteBane(
-  barer: Bar[],
-  drinks: DrinkId[],
-  opts: {
-    antallHull?: number;
-    maksAvstandMeter?: number;
-    maksRadiusMeter?: number;
-    /** Start nær dette punktet (lng, lat), f.eks. midt i Midtbyen */
-    startSenter?: [number, number];
-    startRadiusMeter?: number;
-  } = {}
+export function lagBesteTur(
+  steder: Sted[],
+  kategorier: KategoriId[],
+  antall: number,
+  start: [number, number]
 ): Hull[] {
-  const antallHull = opts.antallHull ?? 9;
-  let kandidater = barer;
-  if (opts.startSenter) {
-    const sentrum = opts.startSenter;
-    const nar = barer.filter(
-      (b) =>
-        haversineMeter(sentrum, b.geometry.coordinates as [number, number]) <=
-        (opts.startRadiusMeter ?? 600)
-    );
-    kandidater =
-      nar.length > 0
-        ? nar
-        : [
-            barer.reduce((a, b) =>
-              haversineMeter(sentrum, pos(b)) < haversineMeter(sentrum, pos(a))
-                ? b
-                : a
-            ),
-          ];
-  }
   let beste: Hull[] = [];
   let besteScore = Infinity;
-  for (const start of kandidater) {
-    const bane = lagBane(start, barer, drinks, opts);
-    let score = (antallHull - bane.length) * 10000;
-    for (let i = 1; i < bane.length; i++) {
-      const a = bane[i - 1].bar;
-      const b = bane[i].bar;
-      score += haversineMeter(
-        a.geometry.coordinates as [number, number],
-        b.geometry.coordinates as [number, number]
-      );
-      if (b.properties.pris > a.properties.pris) score += 3000;
-    }
+  for (let forsok = 0; forsok < 60; forsok++) {
+    const tur = lagTur(steder, kategorier, antall, start, stokk(kategorier));
+    // Færre stopp enn ønsket straffes hardt
+    const score = (antall - tur.length) * 100000 + turLengde(tur, start);
     if (score < besteScore) {
       besteScore = score;
-      beste = bane;
+      beste = tur;
     }
   }
   return beste;

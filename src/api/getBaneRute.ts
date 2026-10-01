@@ -7,7 +7,7 @@ type Resultat = { geometri: FeatureCollection; totalSekunder?: number };
 /** Gangrute gjennom alle stoppene på banen. */
 export async function getBaneRute(hull: Hull[]): Promise<Resultat | undefined> {
   if (hull.length < 2) return undefined;
-  const punkter = hull.map((h) => h.bar.geometry.coordinates as Punkt);
+  const punkter = hull.map((h) => h.sted.geometry.coordinates as Punkt);
   const rute = await hentGangRute(punkter);
   return {
     geometri: {

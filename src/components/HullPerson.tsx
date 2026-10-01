@@ -1,74 +1,40 @@
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { spillLyd, snakk } from '../utils/lyd';
-import { Box, Typography } from '@mui/material';
-import { PROFILER } from '../data/profiler';
-import { DrinkAvatar } from './DrinkAvatar';
-import { drinkById } from '../data/drinks';
-import type { DrinkId } from '../types/pubgolf';
+import { kategoriById } from '../data/kategorier';
+import type { Hull } from '../types/pubgolf';
+import { snakk, spillLyd } from '../utils/lyd';
 
-/** «Her lurer …»: tinder-matchen som venter på baren. */
-export function PersonKort({ drink }: { drink: DrinkId }) {
-  const p = PROFILER[drink];
-  const d = drinkById(drink);
-  return (
-    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center', minWidth: 200 }}>
-      <div style={{ width: 56, height: 56, flexShrink: 0 }}>
-        <DrinkAvatar id={drink} fyll />
-      </div>
-      <Box>
-        <Typography sx={{ fontSize: 12, opacity: 0.8 }}>Her lurer</Typography>
-        <Typography sx={{ fontWeight: 900, lineHeight: 1.1 }}>
-          {p.profilnavn}, {p.alder}
-        </Typography>
-        <Typography sx={{ fontSize: 12 }}>
-          {d.emoji} {d.navn}
-        </Typography>
-      </Box>
-    </Box>
-  );
-}
+/** Stor avsløring når man kommer frem til et nytt stopp. */
+export function Reveal({ hull, onLukk }: { hull: Hull; onLukk: () => void }) {
+  const kat = kategoriById(hull.kategori);
+  const navn = hull.sted.properties.navn;
 
-/** Stor avsløring når man kommer frem til baren. */
-export function Reveal({
-  drink,
-  hullNr,
-  onLukk,
-}: {
-  drink: DrinkId;
-  hullNr: number;
-  onLukk: () => void;
-}) {
-  const p = PROFILER[drink];
-  const d = drinkById(drink);
   useEffect(() => {
-    // Trommevirvel først, så smell og navn på stemmen
+    // Trommevirvel først, så smell og tekst på stemmen
     spillLyd('par');
     const t1 = setTimeout(() => spillLyd('strike'), 1600);
     const t2 = setTimeout(
-      () => snakk(`Møt ${p.profilnavn}! Du får ${d.navn}.`),
+      () => snakk(`Neste stopp: ${navn}! Her skal du ${kat.gjor}.`),
       1900
     );
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
     };
-  }, [p.profilnavn, d.navn]);
+  }, [navn, kat.gjor]);
+
   return createPortal(
     <div className="reveal" onClick={onLukk}>
       <div className="reveal-kort">
-        <div className="reveal-topp">
-          Hull {hullNr}: møt {p.profilnavn} her!
+        <div className="reveal-topp">Stopp {hull.nr}: her skal du…</div>
+        <div
+          className="reveal-bilde reveal-emoji"
+          style={{ background: kat.farge }}
+        >
+          {kat.emoji}
         </div>
-        <div className="reveal-bilde">
-          <DrinkAvatar id={drink} fyll />
-        </div>
-        <div className="reveal-navn">
-          {p.profilnavn}, {p.alder}
-        </div>
-        <div className="reveal-drink">
-          og {d.emoji} {d.navn} · Par {d.par}
-        </div>
+        <div className="reveal-navn">{kat.navn}</div>
+        <div className="reveal-drink">{navn}</div>
         <div className="reveal-trykk">Trykk for å starte 🎉</div>
       </div>
     </div>,

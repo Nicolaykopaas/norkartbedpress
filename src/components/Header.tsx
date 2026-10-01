@@ -27,7 +27,9 @@ const Header = () => {
         src={NorkartLogo}
         style={{ filter: 'brightness(0) invert(1)' }}
       />
-      <h1 style={{ fontSize: '1.5rem', margin: '0 0 0 12px' }}>🗺️ Byvandring</h1>
+      <h1 style={{ fontSize: '1.5rem', margin: '0 0 0 12px' }}>
+        🗺️ Byvandring
+      </h1>
     </header>
   );
 };
