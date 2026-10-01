@@ -6,12 +6,12 @@ En kartapp for å oppdage Trondheim sentrum, for hele familien. Dette er en **uo
 
 ## Slik fungerer det
 
-1. **Utforsk kartet.** Alle steder vises som runde bilder av stedet, på et satellittkart. Filterknappene nederst skrur kategorier som museum, park, lekeplass og kino av og på. Trykk på et sted for å se bilde, tekst og kreditering.
-2. **2D eller 3D.** Bryteren øverst til høyre bytter mellom flatt kart og vinklet kart med 3D-bygninger og terreng.
-3. **Oppdrag.** Knappen «Oppdrag» viser små oppgaver knyttet til kjente steder, sortert etter avstand. Dere kan vise dem på kartet og markere dem som gjort.
-4. **Planlegg tur.** Appen lager en tur med sju stopp som veksler mellom kategoriene dere har på, og velger rekkefølgen med kortest samlet gangavstand fra Torvet.
-5. **På tur.** En figur går fra Studentersamfundet til første stopp. Ved hvert stopp får dere et kort med bilde, og trykker «Gjort» for å gå videre. Oppdrag i nærheten dukker opp underveis.
-6. **Oppsummering** med deling av turen.
+Appen har tre faner: **Utforsk**, **Min tur** og **Oppdrag**. På mobil ligger de nederst med bildekortene under kartet. På PC ligger de i en sidekolonne til venstre, med kartet til høyre.
+
+1. **Utforsk.** Alle steder vises som runde bilder av stedet på et satellittkart. Søkefeltet og filterknappene snevrer inn utvalget, og bildekortene kan blas i. Trykk på et kort eller et bilde for å se stedet.
+2. **Min tur.** Svar på to spørsmål med bilder (hvor lang tid dere har, og hva dere har lyst til), så lager appen en tur med kortest mulig gangavstand fra Torvet. En figur går fra Studentersamfundet til første stopp, og ved hvert stopp får dere et kort med bilde og trykker «Gjort» for å gå videre.
+3. **Oppdrag.** Små oppgaver knyttet til kjente steder, sortert etter avstand. Dere kan vise dem på kartet og markere dem som gjort. Oppdrag i nærheten dukker også opp underveis på turen.
+4. **2D/3D.** Knappen på kartet bytter mellom flatt kart og vinklet kart med 3D-bygninger og terreng.
 
 ## Teknologi
 

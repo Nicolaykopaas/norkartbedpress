@@ -8,16 +8,7 @@ import {
 } from 'maplibre-react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { FeatureCollection } from 'geojson';
-import {
-  Box,
-  Button,
-  Chip,
-  Stack,
-  ToggleButton,
-  ToggleButtonGroup,
-  Typography,
-} from '@mui/material';
-import { Overlay } from './Overlay';
+import { Box, Button, Chip, Stack, Typography } from '@mui/material';
 import { GaaMarker, IntroGange } from './Gaa';
 import { KARTSTIL } from '../utils/kartstil';
 import { hentGangLinje, type Punkt } from '../utils/gange';
@@ -27,6 +18,9 @@ import { AktivitetMarkers } from './AktivitetMarkers';
 import { StoppKort } from './StoppKort';
 import { Oppsummering } from './Oppsummering';
 import { OppdragPanel, type OppdragMedPos } from './OppdragPanel';
+import { Faner, type Fane } from './Faner';
+import { StedKarusell } from './StedKarusell';
+import { TurVeiviser, type Interesse } from './TurVeiviser';
 import { useTur } from '../hooks/useTur';
 import { useOppdrag } from '../hooks/useOppdrag';
 import { OPPDRAG } from '../data/oppdrag';
@@ -39,8 +33,7 @@ import aktiviteter from '../sample_data/aktiviteter.json';
 // Torvet, midt i Midtbyen
 const TRONDHEIM_COORDS: Punkt = [10.39506, 63.43049];
 
-const ANTALL_STOPP = 7;
-const OPPSETT_KEY = 'byvandring-oppsett-v3';
+const OPPSETT_KEY = 'byvandring-oppsett-v4';
 
 // Kun steder vi har et ekte foto av
 const STEDER: Sted[] = (aktiviteter as StedCollection).features.filter(
@@ -57,6 +50,28 @@ const ANTALL_PER_KATEGORI = STEDER.reduce<Partial<Record<KategoriId, number>>>(
   {}
 );
 const TILGJENGELIGE = KATEGORIER.filter((k) => ANTALL_PER_KATEGORI[k.id]);
+
+/** Valgene i tur-veiviseren, med et typisk bilde for hver. */
+const INTERESSER: Interesse[] = (
+  [
+    { id: 'se', navn: 'Se byen', kategorier: ['se'] },
+    { id: 'natur', navn: 'Natur og parker', kategorier: ['park', 'tur'] },
+    { id: 'kultur', navn: 'Kunst og kultur', kategorier: ['museum', 'scene'] },
+    { id: 'lek', navn: 'Lek', kategorier: ['lekeplass'] },
+    {
+      id: 'film',
+      navn: 'Film og moro',
+      kategorier: ['kino', 'bowling', 'spill'],
+    },
+    { id: 'bad', navn: 'Bad og badstue', kategorier: ['badstue', 'bading'] },
+  ] as Interesse[]
+)
+  .filter((i) => i.kategorier.some((k) => ANTALL_PER_KATEGORI[k]))
+  .map((i) => ({
+    ...i,
+    foto: STEDER.find((s) => i.kategorier.includes(s.properties.kategori))
+      ?.properties.foto?.url,
+  }));
 
 type Fase = 'oversikt' | 'tur';
 type Oppsett = {
@@ -83,16 +98,26 @@ function lesOppsett(): Oppsett {
   return TOMT;
 }
 
+const minutter = (s: Sted) =>
+  Math.max(
+    1,
+    Math.round(
+      haversineMeter(TRONDHEIM_COORDS, s.geometry.coordinates as Punkt) / 80
+    )
+  );
+
 export const MapLibreMap = () => {
   const [oppsett, setOppsett] = useState<Oppsett>(lesOppsett);
+  const [fane, setFane] = useState<Fane>(() =>
+    lesOppsett().fase === 'tur' ? 'tur' : 'utforsk'
+  );
   const [rute, setRute] = useState<
     { geometri: FeatureCollection; totalSekunder?: number } | undefined
   >(undefined);
   const [flyTil, setFlyTil] = useState<{ pos: Punkt; zoom: number }>();
   const [valgtSted, setValgtSted] = useState<Sted>();
+  const [sok, setSok] = useState('');
   const [er3d, setEr3d] = useState(true);
-  const [visOppdrag, setVisOppdrag] = useState(false);
-  const tur = useTur(ANTALL_STOPP);
   const oppdrag = useOppdrag();
 
   useEffect(() => {
@@ -113,6 +138,7 @@ export const MapLibreMap = () => {
       }),
     [oppsett.turIds]
   );
+  const tur = useTur(Math.max(hull.length, 1));
 
   useEffect(() => {
     if (hull.length < 2) return;
@@ -125,10 +151,19 @@ export const MapLibreMap = () => {
     };
   }, [hull]);
 
-  const synlige = useMemo(
-    () => STEDER.filter((s) => !oppsett.skjult.includes(s.properties.kategori)),
-    [oppsett.skjult]
-  );
+  // Steder som passer filteret og søket, nærmest Torvet først
+  const liste = useMemo(() => {
+    const q = sok.trim().toLowerCase();
+    return STEDER.filter(
+      (s) =>
+        !oppsett.skjult.includes(s.properties.kategori) &&
+        (!q || s.properties.navn.toLowerCase().includes(q))
+    ).sort(
+      (a, b) =>
+        haversineMeter(TRONDHEIM_COORDS, a.geometry.coordinates as Punkt) -
+        haversineMeter(TRONDHEIM_COORDS, b.geometry.coordinates as Punkt)
+    );
+  }, [oppsett.skjult, sok]);
 
   const [intro, setIntro] = useState<'gaar' | 'ferdig'>('ferdig');
   const [revealHull, setRevealHull] = useState<number>();
@@ -136,17 +171,9 @@ export const MapLibreMap = () => {
   const [lukkedeOppdrag, setLukkedeOppdrag] = useState<string[]>([]);
   const [oppdragKlar, setOppdragKlar] = useState(false);
 
-  const planlegg = () => {
-    const kategorier = TILGJENGELIGE.map((k) => k.id).filter(
-      (k) => !oppsett.skjult.includes(k)
-    );
-    if (kategorier.length === 0) return;
-    const bane = lagBesteTur(
-      STEDER,
-      kategorier,
-      ANTALL_STOPP,
-      TRONDHEIM_COORDS
-    );
+  const lagTur = (stopp: number, kategorier: KategoriId[]) => {
+    const unike = [...new Set(kategorier)];
+    const bane = lagBesteTur(STEDER, unike, stopp, TRONDHEIM_COORDS);
     if (bane.length === 0) return;
     tur.nullstill();
     setRute(undefined);
@@ -157,6 +184,7 @@ export const MapLibreMap = () => {
       fase: 'tur',
       turIds: bane.map((h) => h.sted.properties.id),
     }));
+    setFane('tur');
   };
 
   const nyTur = () => {
@@ -164,38 +192,41 @@ export const MapLibreMap = () => {
     setRute(undefined);
     setIntro('ferdig');
     setLeg(undefined);
-    setValgtSted(undefined);
-    setOppsett(TOMT);
+    setOppsett((o) => ({ ...o, fase: 'oversikt', turIds: [] }));
   };
 
   const iTur = oppsett.fase === 'tur';
   const aktivtHullNr = tur.aktivtHull;
+  const paaTurFane = iTur && fane === 'tur';
   const aktivSted = iTur && !tur.ferdig ? hull[aktivtHullNr]?.sted : undefined;
 
   // Følg aktivt stopp på kartet
   useEffect(() => {
-    if (aktivSted)
+    if (aktivSted && fane === 'tur')
       setFlyTil({ pos: aktivSted.geometry.coordinates as Punkt, zoom: 15.5 });
-  }, [aktivSted]);
+  }, [aktivSted, fane]);
 
   // Oppdrag i nærheten dukker opp litt ut i turen, ikke med en gang
   useEffect(() => {
     setOppdragKlar(false);
-    if (!iTur || intro !== 'ferdig' || tur.ferdig || aktivtHullNr < 1) return;
+    if (!paaTurFane || intro !== 'ferdig' || tur.ferdig || aktivtHullNr < 1)
+      return;
     const t = setTimeout(() => setOppdragKlar(true), 3500);
     return () => clearTimeout(t);
-  }, [aktivtHullNr, iTur, intro, tur.ferdig]);
+  }, [aktivtHullNr, paaTurFane, intro, tur.ferdig]);
 
   // Kort ved hvert nytt stopp
   useEffect(() => {
-    if (iTur && intro === 'ferdig' && !tur.ferdig) setRevealHull(aktivtHullNr);
+    if (paaTurFane && intro === 'ferdig' && !tur.ferdig)
+      setRevealHull(aktivtHullNr);
     else setRevealHull(undefined);
-  }, [aktivtHullNr, iTur, intro, tur.ferdig]);
+  }, [aktivtHullNr, paaTurFane, intro, tur.ferdig]);
 
   // Kun etappen til neste stopp tegnes, ikke hele ruten på en gang
   useEffect(() => {
     setLeg(undefined);
-    if (!iTur || intro !== 'ferdig' || tur.ferdig || aktivtHullNr < 1) return;
+    if (!paaTurFane || intro !== 'ferdig' || tur.ferdig || aktivtHullNr < 1)
+      return;
     const forrige = hull[aktivtHullNr - 1];
     const naa = hull[aktivtHullNr];
     if (!forrige || !naa) return;
@@ -209,7 +240,7 @@ export const MapLibreMap = () => {
     return () => {
       avbrutt = true;
     };
-  }, [aktivtHullNr, iTur, intro, tur.ferdig, hull]);
+  }, [aktivtHullNr, paaTurFane, intro, tur.ferdig, hull]);
 
   // Oppdrag med posisjon og avstand fra der man er
   const referanse: Punkt =
@@ -234,80 +265,28 @@ export const MapLibreMap = () => {
         )
       : undefined;
 
-  const panel = (() => {
-    if (!iTur) {
-      return (
-        <Stack spacing={1.25}>
-          <Stack
-            direction="row"
-            justifyContent="space-between"
-            alignItems="baseline"
-          >
-            <Typography sx={{ fontSize: 20, fontWeight: 800 }}>
-              Utforsk Trondheim
-            </Typography>
-            <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>
-              {synlige.length} steder
-            </Typography>
-          </Stack>
-          <Box className="filter-rad">
-            <Chip
-              label="Alle"
-              onClick={() => setOppsett((o) => ({ ...o, skjult: [] }))}
-              color={oppsett.skjult.length === 0 ? 'primary' : 'default'}
-              variant={oppsett.skjult.length === 0 ? 'filled' : 'outlined'}
-              sx={{ fontWeight: 600 }}
-            />
-            {TILGJENGELIGE.map((k) => {
-              const av = oppsett.skjult.includes(k.id);
-              return (
-                <Chip
-                  key={k.id}
-                  label={`${k.navn} ${ANTALL_PER_KATEGORI[k.id]}`}
-                  onClick={() =>
-                    setOppsett((o) => ({
-                      ...o,
-                      skjult: av
-                        ? o.skjult.filter((x) => x !== k.id)
-                        : [...o.skjult, k.id],
-                    }))
-                  }
-                  variant={av ? 'outlined' : 'filled'}
-                  sx={{
-                    fontWeight: 600,
-                    bgcolor: av ? 'transparent' : k.farge,
-                    color: av ? 'text.secondary' : '#fff',
-                    borderColor: k.farge,
-                    '&:hover': { bgcolor: av ? '#f0f3f5' : k.farge },
-                  }}
-                />
-              );
-            })}
-          </Box>
-          {valgtSted && (
-            <StedKort sted={valgtSted} onLukk={() => setValgtSted(undefined)} />
-          )}
-          <Button
-            fullWidth
-            variant="contained"
-            onClick={planlegg}
-            disabled={synlige.length === 0}
-            sx={{ height: 50, fontSize: 17 }}
-          >
-            Planlegg tur
-          </Button>
-        </Stack>
-      );
-    }
+  const synligeHull = tur.ferdig
+    ? hull.length
+    : intro === 'gaar'
+      ? 0
+      : tur.aktivtHull + 1;
+
+  const velgSted = (s: Sted) => {
+    setValgtSted(s);
+    setFlyTil({ pos: s.geometry.coordinates as Punkt, zoom: 15.5 });
+  };
+
+  // Innholdet i arket på «Min tur»
+  const turInnhold = (() => {
+    if (!iTur) return <TurVeiviser interesser={INTERESSER} onLag={lagTur} />;
     if (intro === 'gaar' && hull[0]) {
-      const kat = kategoriById(hull[0].kategori);
       return (
         <Stack spacing={1}>
           <Typography sx={{ fontSize: 18, fontWeight: 800 }}>
             På vei fra Studentersamfundet til {hull[0].sted.properties.navn}
           </Typography>
           <Typography sx={{ fontSize: 14, color: 'text.secondary' }}>
-            Første stopp: {kat.navn.toLowerCase()}.
+            Første stopp: {kategoriById(hull[0].kategori).navn.toLowerCase()}.
           </Typography>
           <Button variant="outlined" onClick={() => setIntro('ferdig')}>
             Hopp over
@@ -326,15 +305,34 @@ export const MapLibreMap = () => {
       );
     }
     return (
-      <StoppKort hull={hull} tur={tur} totalSekunder={rute?.totalSekunder} />
+      <>
+        <StoppKort hull={hull} tur={tur} totalSekunder={rute?.totalSekunder} />
+        <Box className="forhand">
+          {hull.map((h, i) => (
+            <button
+              key={h.sted.properties.id}
+              aria-label={`Stopp ${h.nr}: ${h.sted.properties.navn}`}
+              className={i === tur.aktivtHull ? 'aktiv' : ''}
+              onClick={() => tur.settHull(i)}
+              style={{
+                backgroundImage: h.sted.properties.foto
+                  ? `url("${h.sted.properties.foto.url}")`
+                  : undefined,
+              }}
+            />
+          ))}
+        </Box>
+        <Button
+          size="small"
+          color="inherit"
+          onClick={nyTur}
+          sx={{ mt: 0.5, color: 'text.secondary' }}
+        >
+          Lag ny tur
+        </Button>
+      </>
     );
   })();
-
-  const synligeHull = tur.ferdig
-    ? hull.length
-    : intro === 'gaar'
-      ? 0
-      : tur.aktivtHull + 1;
 
   return (
     <RMap
@@ -347,18 +345,16 @@ export const MapLibreMap = () => {
       style={{ height: `calc(100dvh - var(--header-height))` }}
       onClick={() => setValgtSted(undefined)}
     >
+      <div className="sidebar-bg" />
       <KartModus er3d={er3d} />
-      {!iTur && (
+      {fane === 'utforsk' && (
         <AktivitetMarkers
-          steder={synlige}
+          steder={liste}
           valgtId={valgtSted?.properties.id}
-          onVelg={(s) => {
-            setValgtSted(s);
-            setFlyTil({ pos: s.geometry.coordinates as Punkt, zoom: 15.5 });
-          }}
+          onVelg={velgSted}
         />
       )}
-      {visOppdrag &&
+      {fane === 'oppdrag' &&
         oppdragMedPos.map((o, i) => (
           <RMarker key={o.id} longitude={o.pos[0]} latitude={o.pos[1]}>
             <div className="oppdrag-pin" title={o.tittel}>
@@ -366,7 +362,7 @@ export const MapLibreMap = () => {
             </div>
           </RMarker>
         ))}
-      {iTur && hull.length > 0 && (
+      {iTur && fane === 'tur' && hull.length > 0 && (
         <BaneLayer
           hull={hull.slice(0, synligeHull)}
           aktivtHull={tur.ferdig ? undefined : tur.aktivtHull}
@@ -398,7 +394,7 @@ export const MapLibreMap = () => {
           <GaaMarker linje={leg} varighetMs={8000} klasse="gruppe" loop />
         </>
       )}
-      {iTur && intro === 'gaar' && hull.length > 0 && (
+      {paaTurFane && intro === 'gaar' && hull.length > 0 && (
         <IntroGange
           fra={SAMFUNDET}
           til={hull[0].sted.geometry.coordinates as Punkt}
@@ -408,6 +404,86 @@ export const MapLibreMap = () => {
       {flyTil && (
         <MapFlyTo lng={flyTil.pos[0]} lat={flyTil.pos[1]} zoom={flyTil.zoom} />
       )}
+
+      {fane === 'utforsk' && (
+        <div className="topp">
+          <label className="sok">
+            <svg
+              width="20"
+              height="20"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="#5b6b76"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+            >
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+            <input
+              value={sok}
+              onChange={(e) => setSok(e.target.value)}
+              placeholder="Utforsk Trondheim"
+              aria-label="Søk etter steder"
+            />
+          </label>
+          <div className="chips-rad">
+            <Chip
+              label="Alle"
+              onClick={() => setOppsett((o) => ({ ...o, skjult: [] }))}
+              color={oppsett.skjult.length === 0 ? 'primary' : 'default'}
+              sx={{
+                fontWeight: 600,
+                bgcolor: oppsett.skjult.length ? '#fff' : undefined,
+              }}
+            />
+            {TILGJENGELIGE.map((k) => {
+              const av = oppsett.skjult.includes(k.id);
+              return (
+                <Chip
+                  key={k.id}
+                  label={k.navn}
+                  onClick={() =>
+                    setOppsett((o) => ({
+                      ...o,
+                      skjult: av
+                        ? o.skjult.filter((x) => x !== k.id)
+                        : [...o.skjult, k.id],
+                    }))
+                  }
+                  sx={{
+                    fontWeight: 600,
+                    bgcolor: av ? '#fff' : k.farge,
+                    color: av ? '#1b2a35' : '#fff',
+                    border: `2px solid ${k.farge}`,
+                    '&:hover': { bgcolor: av ? '#f0f3f5' : k.farge },
+                  }}
+                />
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {paaTurFane && iTur && !tur.ferdig && intro === 'ferdig' && (
+        <div
+          className="fremdrift"
+          aria-label={`Stopp ${tur.aktivtHull + 1} av ${hull.length}`}
+        >
+          {hull.map((h, i) => (
+            <span
+              key={h.sted.properties.id}
+              className={
+                tur.gjort[i] ? 'g' : i === tur.aktivtHull ? 'n' : undefined
+              }
+            />
+          ))}
+          <em>
+            Stopp {tur.aktivtHull + 1} av {hull.length}
+          </em>
+        </div>
+      )}
+
       {naerOppdrag && (
         <div className="oppdragskort">
           <Typography sx={{ fontSize: 12, color: '#e07a1f', fontWeight: 700 }}>
@@ -438,6 +514,68 @@ export const MapLibreMap = () => {
           </Stack>
         </div>
       )}
+
+      <div className={`side${fane === 'utforsk' ? ' lav' : ''}`}>
+        <button
+          className="rund"
+          onClick={() => setEr3d((v) => !v)}
+          aria-label={er3d ? 'Bytt til flatt kart' : 'Bytt til 3D-kart'}
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#0f3b57"
+            strokeWidth="2"
+            strokeLinejoin="round"
+          >
+            <path d="M12 3l9 5-9 5-9-5 9-5z" />
+            <path d="M3 13l9 5 9-5" />
+          </svg>
+          <small>{er3d ? '3D' : '2D'}</small>
+        </button>
+        <button
+          className="rund"
+          onClick={() => setFlyTil({ pos: TRONDHEIM_COORDS, zoom: 14.5 })}
+          aria-label="Vis sentrum"
+        >
+          <svg
+            width="22"
+            height="22"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="#0f3b57"
+            strokeWidth="2"
+            strokeLinecap="round"
+          >
+            <circle cx="12" cy="12" r="7" />
+            <circle cx="12" cy="12" r="2.5" fill="#0f3b57" />
+            <path d="M12 2v3M12 19v3M2 12h3M19 12h3" />
+          </svg>
+        </button>
+      </div>
+
+      {fane === 'utforsk' && (
+        <StedKarusell
+          steder={liste}
+          valgtId={valgtSted?.properties.id}
+          onVelg={velgSted}
+          minutter={minutter}
+        />
+      )}
+      {fane === 'tur' && <div className="ark">{turInnhold}</div>}
+      {fane === 'oppdrag' && (
+        <div className="ark">
+          <OppdragPanel
+            oppdrag={oppdragMedPos}
+            gjort={oppdrag.gjort}
+            onVeksle={oppdrag.veksle}
+            onVis={(pos) => setFlyTil({ pos, zoom: 16 })}
+          />
+        </div>
+      )}
+
       {revealHull !== undefined && hull[revealHull] && (
         <Reveal
           hull={hull[revealHull]}
@@ -445,153 +583,18 @@ export const MapLibreMap = () => {
           onLukk={() => setRevealHull(undefined)}
         />
       )}
-      {visOppdrag && (
-        <OppdragPanel
-          oppdrag={oppdragMedPos}
-          gjort={oppdrag.gjort}
-          onVeksle={oppdrag.veksle}
-          onVis={(pos) => {
-            setFlyTil({ pos, zoom: 16 });
-            setVisOppdrag(false);
-          }}
-          onLukk={() => setVisOppdrag(false)}
-        />
-      )}
 
-      <Stack
-        spacing={0.75}
-        alignItems="flex-end"
-        sx={{ position: 'absolute', top: 8, right: 8, zIndex: 3 }}
-      >
-        <ToggleButtonGroup
-          size="small"
-          exclusive
-          value={er3d ? '3d' : '2d'}
-          onChange={(_, v) => v && setEr3d(v === '3d')}
-          sx={{ bgcolor: '#fff', boxShadow: 2 }}
-        >
-          <ToggleButton value="2d" sx={{ px: 1.5, fontWeight: 700 }}>
-            2D
-          </ToggleButton>
-          <ToggleButton value="3d" sx={{ px: 1.5, fontWeight: 700 }}>
-            3D
-          </ToggleButton>
-        </ToggleButtonGroup>
-        <Button
-          size="small"
-          variant="contained"
-          color="secondary"
-          onClick={() => setVisOppdrag((v) => !v)}
-          sx={{ boxShadow: 2 }}
-        >
-          Oppdrag ({oppdrag.gjort.length}/{OPPDRAG.length})
-        </Button>
-        <Button
-          size="small"
-          variant="contained"
-          color="inherit"
-          onClick={nyTur}
-          sx={{ bgcolor: '#fff', boxShadow: 2 }}
-        >
-          Start på nytt
-        </Button>
-      </Stack>
-
-      <Overlay
-        className="panel panel-bunn"
-        style={{
-          position: 'absolute',
-          top: 8,
-          left: 8,
-          zIndex: 1,
-          width: 'min(380px, calc(100vw - 32px))',
-          maxHeight: 'calc(100% - 16px)',
-          overflowY: 'auto',
+      <Faner
+        aktiv={fane}
+        onVelg={setFane}
+        badge={{
+          tur: iTur && !tur.ferdig ? hull.length - tur.aktivtHull : 0,
+          oppdrag: OPPDRAG.length - oppdrag.gjort.length,
         }}
-      >
-        {panel}
-        {!iTur && (
-          <Typography
-            variant="caption"
-            component="p"
-            sx={{ mt: 1, color: 'text.secondary', fontSize: 10 }}
-          >
-            Steder og kart: © OpenStreetMap-bidragsytere. Satellitt: Esri.
-            Bilder: Wikimedia Commons.
-          </Typography>
-        )}
-      </Overlay>
+      />
     </RMap>
   );
 };
-
-function StedKort({ sted, onLukk }: { sted: Sted; onLukk: () => void }) {
-  const kat = kategoriById(sted.properties.kategori);
-  const foto = sted.properties.foto;
-  return (
-    <Box
-      sx={{
-        display: 'flex',
-        gap: 1.25,
-        p: 1,
-        border: '1px solid #dde4e9',
-        borderRadius: 2,
-      }}
-    >
-      {foto && (
-        <Box
-          sx={{
-            width: 84,
-            height: 84,
-            flexShrink: 0,
-            borderRadius: 1.5,
-            background: `url("${foto.url}") center / cover`,
-          }}
-        />
-      )}
-      <Box sx={{ minWidth: 0, flex: 1 }}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="flex-start"
-        >
-          <Box sx={{ minWidth: 0 }}>
-            <Typography sx={{ fontWeight: 800, fontSize: 16, lineHeight: 1.2 }}>
-              {sted.properties.navn}
-            </Typography>
-            <Typography
-              sx={{ fontSize: 12, color: kat.farge, fontWeight: 700 }}
-            >
-              {kat.navn}
-            </Typography>
-          </Box>
-          <Button
-            size="small"
-            color="inherit"
-            onClick={onLukk}
-            sx={{ minWidth: 0 }}
-          >
-            Lukk
-          </Button>
-        </Stack>
-        <Typography sx={{ fontSize: 13, color: 'text.secondary', mt: 0.25 }}>
-          {sted.properties.fakta ?? kat.fakta}
-        </Typography>
-        {foto && (
-          <Typography
-            component="a"
-            href={foto.side}
-            target="_blank"
-            rel="noreferrer"
-            sx={{ fontSize: 10, color: 'text.secondary' }}
-          >
-            Foto: {foto.forfatter} ({foto.lisens})
-          </Typography>
-        )}
-      </Box>
-    </Box>
-  );
-}
 
 /** Bytter mellom 2D (flatt kart) og 3D (vinklet kart med bygninger og terreng). */
 function KartModus({ er3d }: { er3d: boolean }) {
@@ -627,13 +630,19 @@ function MapFlyTo({
   const map = useMap();
 
   useEffect(() => {
+    // PC: sidekolonnen dekker venstre side. Mobil: kort og ark ligger nederst.
+    const pc = window.matchMedia('(min-width: 900px)').matches;
     const mobil = window.matchMedia('(max-width: 600px)').matches;
     map.flyTo({
       center: [lng, lat],
       zoom,
       speed: 1.5,
-      // Panelet ligger nederst på mobil, så flytt midten opp
-      padding: { top: 0, left: 0, right: 0, bottom: mobil ? 300 : 0 },
+      padding: {
+        top: 0,
+        left: pc ? 420 : 0,
+        right: 0,
+        bottom: !pc && mobil ? 280 : 0,
+      },
     });
   }, [lng, lat, zoom, map]);
 

@@ -9,40 +9,19 @@ export function OppdragPanel({
   gjort,
   onVeksle,
   onVis,
-  onLukk,
 }: {
   oppdrag: OppdragMedPos[];
   gjort: string[];
   onVeksle: (id: string) => void;
   onVis: (pos: [number, number]) => void;
-  onLukk: () => void;
 }) {
   return (
-    <Box
-      sx={{
-        position: 'absolute',
-        top: 56,
-        right: 12,
-        zIndex: 4,
-        width: 'min(340px, calc(100vw - 24px))',
-        maxHeight: 'calc(100% - 140px)',
-        overflowY: 'auto',
-        bgcolor: '#fff',
-        borderRadius: 2,
-        p: 1.5,
-        boxShadow: '0 8px 28px rgba(15, 59, 87, 0.3)',
-      }}
-    >
-      <Stack direction="row" justifyContent="space-between" alignItems="center">
-        <Typography sx={{ fontSize: 18, fontWeight: 800 }}>
-          Oppdrag ({gjort.length} av {OPPDRAG.length})
-        </Typography>
-        <Button size="small" color="inherit" onClick={onLukk}>
-          Lukk
-        </Button>
-      </Stack>
-      <Typography sx={{ fontSize: 13, color: 'text.secondary', mb: 1 }}>
-        Små oppgaver knyttet til kjente steder. Sortert etter avstand.
+    <Box>
+      <Typography sx={{ fontSize: 22, fontWeight: 800 }}>
+        Oppdrag ({gjort.length} av {OPPDRAG.length})
+      </Typography>
+      <Typography sx={{ fontSize: 14, color: 'text.secondary', mb: 1 }}>
+        Små oppgaver knyttet til kjente steder, sortert etter avstand.
       </Typography>
       <Stack spacing={1}>
         {oppdrag.map((o, i) => {
@@ -54,14 +33,14 @@ export function OppdragPanel({
                 border: '1px solid #dde4e9',
                 borderLeft: `4px solid ${ferdig ? '#2e7d32' : '#e07a1f'}`,
                 borderRadius: 1.5,
-                p: 1,
-                opacity: ferdig ? 0.7 : 1,
+                p: 1.25,
+                opacity: ferdig ? 0.65 : 1,
               }}
             >
-              <Typography sx={{ fontWeight: 700, fontSize: 15 }}>
+              <Typography sx={{ fontWeight: 700, fontSize: 16 }}>
                 {i + 1}. {o.tittel}
               </Typography>
-              <Typography sx={{ fontSize: 13, color: 'text.secondary' }}>
+              <Typography sx={{ fontSize: 14, color: 'text.secondary' }}>
                 {o.tekst}
               </Typography>
               <Typography sx={{ fontSize: 12, mt: 0.5 }}>
