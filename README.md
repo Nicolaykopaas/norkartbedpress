@@ -16,21 +16,23 @@ En liten kartapp for hele familien. Du sveiper på alkoholfrie drikker som på T
 ## Teknologi
 
 - React, TypeScript, Vite og Material UI
-- MapLibre GL med Norkarts satellittkart og stedsdata, og Norkarts ruteberegner for gangrutene
+- MapLibre GL med satellittbilder (Esri), 3D-bygninger og stedsnavn (OpenFreeMap / OpenStreetMap) og terreng (AWS Terrain Tiles)
+- Gangruter fra OSRM med fotgjengerprofil (OpenStreetMap-data)
 - GitHub Actions og GitHub Pages for deploy
-- En liten **Cloudflare Worker** (`worker/`) som proxy foran Norkart. En statisk side kan ikke holde en API-nøkkel hemmelig, så Workeren legger på nøkkelen og slipper bare inn forespørsler fra selve siden.
+
+Alt er åpne tjenester uten API-nøkkel, så det ligger ingen hemmeligheter i koden.
 
 ## Viktige valg
 
 - **Banealgoritmen** (`src/utils/bane.ts`) prøver hvert mulige startpunkt og velger ruten med kortest samlet gangavstand.
-- **Nøkkelen er aldri i bygget.** I produksjon går kartfliser og rutekall via Workeren (`VITE_PROXY_URL`). Lokalt brukes `VITE_API_KEY` fra en `.env`-fil som ikke committes.
+- **Kartstilen** (`src/utils/kartstil.ts`) er satt sammen i koden i stedet for å hentes ferdig. Det gir full kontroll over lagene, og høyden på 3D-byggene kommer fra OpenStreetMap-dataene.
 - **Ingen bilder av personer.** Alle kompisene er tegnet som SVG, så appen er trygg å vise til alle.
+- Appen startet som en workshop med Norkart-kart. Den kan byttes tilbake til Norkart ved å bytte kartstilen og rutekallet.
 
 ## Kjøre lokalt
 
 ```bash
 npm install
-echo "VITE_API_KEY=din-norkart-nøkkel" > .env
 npm run dev
 ```
 
@@ -38,4 +40,4 @@ npm run dev
 
 ## Datakilder
 
-Kart, satellittbilder og ruteberegning: © Norkart. Stedene og faktatekstene er håndplukket.
+Satellittbilder © Esri, Maxar, Earthstar Geographics. Kartdata © OpenStreetMap-bidragsytere via OpenFreeMap. Terreng: Mapzen / AWS Terrain Tiles. Ruter: OSRM. Stedene og faktatekstene er håndplukket.

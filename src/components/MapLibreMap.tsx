@@ -1,4 +1,3 @@
-import { type RequestTransformFunction } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { RLayer, RMap, RSource, useMap } from 'maplibre-react-components';
 import { useEffect, useMemo, useState } from 'react';
@@ -7,6 +6,7 @@ import { Button, Stack, Typography } from '@mui/material';
 import { Overlay } from './Overlay';
 import { EVENTER } from '../data/events';
 import { GaaMarker, IntroGange } from './Gaa';
+import { KARTSTIL } from '../utils/kartstil';
 import { hentGangLinje, type Punkt } from '../utils/gange';
 import { PersonKort, Reveal } from './HullPerson';
 import { PROFILER } from '../data/profiler';
@@ -24,21 +24,6 @@ import steder from '../sample_data/steder.json';
 
 // Torvet, midt i Midtbyen
 const TRONDHEIM_COORDS: [number, number] = [10.39506, 63.43049];
-
-const KVP_BASE_URL = 'https://kvp.maps.norkart.no/mvt/';
-
-type NorkartBasemapVariant =
-  | 'standard'
-  | 'standard-without-text'
-  | 'greyscale'
-  | 'greyscale-without-text'
-  | 'darkmode'
-  | 'transparent'
-  | 'hybrid'
-  | 'ortofoto';
-const NORKART_BASEMAP_VARIANT: NorkartBasemapVariant = 'hybrid';
-
-const NORKART_BASEMAP_STYLE = `${KVP_BASE_URL}norkart-basemap/${NORKART_BASEMAP_VARIANT}/style.json`;
 
 // Man sveiper til man har 7 matcher, og hver match blir ett hull
 const ANTALL_HULL = 7;
@@ -309,8 +294,7 @@ export const MapLibreMap = () => {
       initialZoom={15}
       initialPitch={50}
       maxPitch={75}
-      mapStyle={NORKART_BASEMAP_STYLE}
-      initialTransformRequest={transformRequest}
+      mapStyle={KARTSTIL}
       style={{
         height: `calc(100dvh - var(--header-height))`,
       }}
@@ -438,7 +422,8 @@ export const MapLibreMap = () => {
             component="p"
             sx={{ mt: 1, color: 'text.secondary' }}
           >
-            Kart, satellittbilder og rute: © Norkart
+            Kart: © Esri, OpenStreetMap-bidragsytere (OpenFreeMap). Terreng:
+            AWS. Rute: OSRM
           </Typography>
         )}
       </Overlay>
@@ -462,22 +447,3 @@ function MapFlyTo({ lng, lat }: { lng: number; lat: number }) {
 
   return null;
 }
-
-const transformRequest: RequestTransformFunction = (url) => {
-  if (!url.startsWith(KVP_BASE_URL)) {
-    return { url };
-  }
-
-  // I produksjon går alt via proxyen, som holder nøkkelen hemmelig
-  const proxy = import.meta.env.VITE_PROXY_URL;
-  if (proxy) {
-    return { url: `${proxy}/mvt/${url.slice(KVP_BASE_URL.length)}` };
-  }
-
-  const apiKey = (import.meta.env.VITE_API_KEY ?? '').replace(
-    /[^A-Za-z0-9-]/g,
-    ''
-  );
-  const separator = url.includes('?') ? '&' : '?';
-  return { url: `${url}${separator}api_key=${encodeURIComponent(apiKey)}` };
-};

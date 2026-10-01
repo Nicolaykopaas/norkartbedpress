@@ -264,30 +264,53 @@ body {
   animation: kort-inn 0.3s ease-out;
 }
 @keyframes kort-inn {
-  0% { scale: 0.92; opacity: 0.4; }
-  100% { scale: 1; opacity: 1; }
+  0% {
+    scale: 0.92;
+    opacity: 0.4;
+  }
+  100% {
+    scale: 1;
+    opacity: 1;
+  }
 }
 .panel-bunn > div,
 .pubgolf-panel {
   animation: panel-opp 0.4s ease-out both;
 }
 @keyframes panel-opp {
-  0% { transform: translateY(24px); opacity: 0; }
-  100% { transform: none; opacity: 1; }
+  0% {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
 }
 .bar-marker {
   animation: pop-inn 0.5s cubic-bezier(0.3, 1.6, 0.5, 1) both;
 }
 @keyframes pop-inn {
-  0% { scale: 0; }
-  100% { scale: 1; }
+  0% {
+    scale: 0;
+  }
+  100% {
+    scale: 1;
+  }
 }
 .bar-marker.aktiv .bar-logo {
   animation: puls 1.1s ease-in-out infinite;
 }
 @keyframes puls {
-  0%, 100% { box-shadow: 0 0 10px #00e5ff; }
-  50% { box-shadow: 0 0 26px #ff2bd6, 0 0 40px #00e5ff; }
+  0%,
+  100% {
+    box-shadow: 0 0 10px #00e5ff;
+  }
+  50% {
+    box-shadow:
+      0 0 26px #ff2bd6,
+      0 0 40px #00e5ff;
+  }
 }
 button:active {
   transition: transform 0.08s;
@@ -308,8 +331,12 @@ button:active {
   letter-spacing: -4px;
 }
 @keyframes vrikk {
-  0% { transform: translateY(0) rotate(-6deg); }
-  100% { transform: translateY(-5px) rotate(6deg); }
+  0% {
+    transform: translateY(0) rotate(-6deg);
+  }
+  100% {
+    transform: translateY(-5px) rotate(6deg);
+  }
 }
 
 /* Reveal */
@@ -321,7 +348,9 @@ button:active {
   align-items: center;
   justify-content: center;
   background: rgba(5, 0, 15, 0.85);
-  animation: reveal-bg 0.3s both, strobe 0.25s steps(1) 6,
+  animation:
+    reveal-bg 0.3s both,
+    strobe 0.25s steps(1) 6,
     flash 0.5s ease-out 1.6s both;
 }
 .reveal-kort {
@@ -333,7 +362,8 @@ button:active {
   border-radius: 22px;
   padding: 14px;
   box-shadow: 0 0 40px #ff2bd6;
-  animation: reveal-flip 0.7s cubic-bezier(0.2, 1.3, 0.4, 1) 1.6s both,
+  animation:
+    reveal-flip 0.7s cubic-bezier(0.2, 1.3, 0.4, 1) 1.6s both,
     reveal-skjelv 1.6s linear both;
 }
 .reveal-kort img {
@@ -366,15 +396,27 @@ button:active {
   opacity: 0.8;
 }
 @keyframes reveal-flip {
-  0% { transform: perspective(700px) rotateY(90deg) scale(0.6); opacity: 0; }
-  100% { transform: none; opacity: 1; }
+  0% {
+    transform: perspective(700px) rotateY(90deg) scale(0.6);
+    opacity: 0;
+  }
+  100% {
+    transform: none;
+    opacity: 1;
+  }
 }
 @keyframes reveal-bg {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 @keyframes blink {
-  50% { opacity: 0.3; }
+  50% {
+    opacity: 0.3;
+  }
 }
 
 /* Special event i GTA-stil: oppdragsbanner og telefonsamtale */
@@ -396,7 +438,10 @@ button:active {
   line-height: 1;
   color: #f5c518;
   text-transform: uppercase;
-  text-shadow: 3px 3px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000,
+  text-shadow:
+    3px 3px 0 #000,
+    -2px -2px 0 #000,
+    2px -2px 0 #000,
     -2px 2px 0 #000;
   animation: gta-banner 4s ease-out both;
 }
@@ -449,52 +494,113 @@ button:active {
   cursor: pointer;
 }
 @keyframes gta-banner {
-  0% { transform: scale(2.4); opacity: 0; }
-  10% { transform: scale(1); opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateY(-20px); opacity: 0; }
+  0% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+  10% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-20px);
+    opacity: 0;
+  }
 }
 @keyframes gta-samtale {
-  0% { transform: translateX(-120%); }
-  100% { transform: none; }
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: none;
+  }
 }
 
 /* Spenning: sort silhuett, skjelving og strobe, så avsløring med blits */
 @keyframes silhuett {
-  0% { filter: brightness(0); }
-  100% { filter: brightness(0); }
+  0% {
+    filter: brightness(0);
+  }
+  100% {
+    filter: brightness(0);
+  }
 }
 .reveal-kort img {
-  animation: silhuett 1.6s steps(1) both, avslor 0.4s 1.6s both;
+  animation:
+    silhuett 1.6s steps(1) both,
+    avslor 0.4s 1.6s both;
 }
 @keyframes avslor {
-  0% { filter: brightness(6) saturate(0); transform: scale(1.15); }
-  100% { filter: none; transform: none; }
+  0% {
+    filter: brightness(6) saturate(0);
+    transform: scale(1.15);
+  }
+  100% {
+    filter: none;
+    transform: none;
+  }
 }
 @keyframes reveal-skjelv {
-  0% { transform: translate(0, 0) scale(0.7); }
-  10% { transform: translate(-6px, 4px) scale(0.75); }
-  20% { transform: translate(6px, -4px) scale(0.78); }
-  30% { transform: translate(-8px, 2px) scale(0.8); }
-  40% { transform: translate(8px, -3px) scale(0.82); }
-  50% { transform: translate(-10px, 5px) scale(0.84); }
-  60% { transform: translate(10px, -5px) scale(0.86); }
-  70% { transform: translate(-12px, 3px) scale(0.88); }
-  80% { transform: translate(12px, -3px) scale(0.9); }
-  100% { transform: translate(0, 0) scale(0.92); }
+  0% {
+    transform: translate(0, 0) scale(0.7);
+  }
+  10% {
+    transform: translate(-6px, 4px) scale(0.75);
+  }
+  20% {
+    transform: translate(6px, -4px) scale(0.78);
+  }
+  30% {
+    transform: translate(-8px, 2px) scale(0.8);
+  }
+  40% {
+    transform: translate(8px, -3px) scale(0.82);
+  }
+  50% {
+    transform: translate(-10px, 5px) scale(0.84);
+  }
+  60% {
+    transform: translate(10px, -5px) scale(0.86);
+  }
+  70% {
+    transform: translate(-12px, 3px) scale(0.88);
+  }
+  80% {
+    transform: translate(12px, -3px) scale(0.9);
+  }
+  100% {
+    transform: translate(0, 0) scale(0.92);
+  }
 }
 @keyframes strobe {
-  0% { background: rgba(255, 43, 214, 0.55); }
-  50% { background: rgba(0, 229, 255, 0.45); }
+  0% {
+    background: rgba(255, 43, 214, 0.55);
+  }
+  50% {
+    background: rgba(0, 229, 255, 0.45);
+  }
 }
 @keyframes flash {
-  0% { background: #fff; }
-  100% { background: rgba(5, 0, 15, 0.85); }
+  0% {
+    background: #fff;
+  }
+  100% {
+    background: rgba(5, 0, 15, 0.85);
+  }
 }
 @keyframes pop-tekst {
-  0% { transform: scale(0); }
-  70% { transform: scale(1.25); }
-  100% { transform: scale(1); }
+  0% {
+    transform: scale(0);
+  }
+  70% {
+    transform: scale(1.25);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .gta-emoji {
@@ -508,4 +614,18 @@ button:active {
   align-items: center;
   justify-content: center;
   font-size: 40px;
+}
+
+/* Kartkreditering liten og oppe til venstre, så den ikke dekker panelet */
+.maplibregl-ctrl-bottom-right,
+.maplibregl-ctrl-bottom-left {
+  top: 62px;
+  bottom: auto;
+  left: 0;
+  right: auto;
+  max-width: 62vw;
+}
+.maplibregl-ctrl-attrib {
+  font-size: 9px;
+  opacity: 0.85;
 }
