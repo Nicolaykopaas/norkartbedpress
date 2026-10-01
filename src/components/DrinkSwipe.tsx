@@ -47,7 +47,7 @@ export function DrinkSwipe({
         setDx(0);
         if (nyeValgte.length >= MAL_MATCHER || indeks + 1 >= kort.length) {
           ferdigKalt.current = true;
-          onFerdig(nyeValgte.length > 0 ? nyeValgte : ['pils']);
+          onFerdig(nyeValgte.length > 0 ? nyeValgte : ['kakao']);
         } else {
           setValgte(nyeValgte);
           setIndeks(indeks + 1);

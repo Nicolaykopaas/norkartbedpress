@@ -52,7 +52,7 @@ export function Reveal({
     spillLyd('par');
     const t1 = setTimeout(() => spillLyd('strike'), 1600);
     const t2 = setTimeout(
-      () => snakk(`Møt ${p.profilnavn}! Han drikker ${d.navn}.`),
+      () => snakk(`Møt ${p.profilnavn}! Du får ${d.navn}.`),
       1900
     );
     return () => {
@@ -79,7 +79,7 @@ export function Reveal({
         <div className="reveal-drink">
           og {d.emoji} {d.navn} · Par {d.par}
         </div>
-        <div className="reveal-trykk">Trykk for å starte 🍻</div>
+        <div className="reveal-trykk">Trykk for å starte 🎉</div>
       </div>
     </div>,
     document.body

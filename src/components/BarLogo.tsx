@@ -21,7 +21,7 @@ export function BarLogo({
       className={`bar-logo${liten ? ' liten' : ''}`}
       style={{ background: farge(bar.id) }}
     >
-      <span>{bar.navn.charAt(0).toUpperCase()}</span>
+      <span>{bar.emoji ?? bar.navn.charAt(0).toUpperCase()}</span>
       <img
         src={`${import.meta.env.BASE_URL}logos/${bar.id}.png`}
         alt=""

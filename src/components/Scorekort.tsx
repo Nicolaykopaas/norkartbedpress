@@ -81,7 +81,7 @@ export function Scorekort({ hull, spill, totalSekunder }: Props) {
         {h.bar.properties.navn}
       </Typography>
       <Typography sx={{ fontSize: 16, mt: 0.25 }}>
-        {drink.emoji} {drink.navn} · Par {h.par} · {h.bar.properties.pris},-
+        {drink.emoji} {drink.navn} · Par {h.par}
       </Typography>
 
       <Stack spacing={1.5} sx={{ my: 1.5 }}>
@@ -145,23 +145,6 @@ export function Scorekort({ hull, spill, totalSekunder }: Props) {
                   +
                 </Button>
               </Stack>
-              {h.drink === 'guinness' && (
-                <Button
-                  fullWidth
-                  sx={{ mt: 1, height: 48, fontSize: 16, fontWeight: 800 }}
-                  variant={p.splitTheG[aktivtHull] ? 'contained' : 'outlined'}
-                  color="warning"
-                  onClick={() => {
-                    spill.toggleSplitTheG(si, aktivtHull);
-                    if (v !== undefined)
-                      visEffekt(
-                        v + (p.splitTheG[aktivtHull] ? 0 : SPLIT_THE_G_BONUS)
-                      );
-                  }}
-                >
-                  🥇 Split the G (−1)
-                </Button>
-              )}
             </Box>
           );
         })}
@@ -192,12 +175,12 @@ export function Scorekort({ hull, spill, totalSekunder }: Props) {
             onClick={spill.nesteHull}
             sx={{ height: 56, fontSize: 20, fontWeight: 800 }}
           >
-            Neste bar 🍻
+            Neste sted ➡️
           </Button>
         )}
       </Stack>
       <Typography sx={{ fontSize: 14, mt: 1, textAlign: 'center' }}>
-        💧 Ta et glass vann
+        📸 Ta et bilde av stedet
         {totalSekunder ? ` · ${Math.round(totalSekunder / 60)} min gange` : ''}
       </Typography>
     </Box>

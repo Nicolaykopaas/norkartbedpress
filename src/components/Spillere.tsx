@@ -21,7 +21,7 @@ export function Spillere({ spillere, onLeggTil, onFjern, onStart }: Props) {
   return (
     <Box sx={{ p: 2, width: '100%', maxWidth: 360 }}>
       <Typography sx={{ fontSize: 26, fontWeight: 900 }} gutterBottom>
-        Hvem skal drikke? 🍻
+        Hvem er med? 🚶
       </Typography>
       <Stack direction="row" spacing={1}>
         <TextField

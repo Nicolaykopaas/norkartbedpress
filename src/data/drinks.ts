@@ -1,74 +1,103 @@
 import type { Drink, DrinkId } from '../types/pubgolf';
-import { EKSTRA_DRINKS } from './ekstra';
 
-const GRUNN_DRINKS: Drink[] = [
+/** Alkoholfrie drikker du «matcher» med. Par = antall slurker. */
+export const DRINKS: Drink[] = [
   {
-    id: 'pils',
-    navn: 'Pils',
-    emoji: '🍺',
-    par: 3,
-    beskrivelse:
-      'Enkel, billig og alltid tilgjengelig. Mamma liker meg ikke, men det gjør ingen andres mødre heller.',
-  },
-  {
-    id: 'guinness',
-    navn: 'Guinness',
-    emoji: '🖤',
-    par: 4,
-    beskrivelse:
-      'Mørk, kald og dyp. Bruker 119 sekunder på å bli skjenket og forventer at du venter. Split the G, eller swipe videre.',
-  },
-  {
-    id: 'ipa',
-    navn: 'IPA',
-    emoji: '🍻',
-    par: 3,
-    beskrivelse:
-      'Sier jeg er «humlete» og «kompleks», men er egentlig bare bitter. Har en bryggeri-tatovering og snakker om det på første date.',
-  },
-  {
-    id: 'cider',
-    navn: 'Cider',
-    emoji: '🍏',
-    par: 3,
-    beskrivelse:
-      'Søt, frisk og litt for lett å få med seg hjem. Sier jeg ikke er som de andre, men er egentlig akkurat som eplejuice med dårlig dømmekraft.',
-  },
-  {
-    id: 'seltzer',
-    navn: 'Seltzer',
-    emoji: '🫧',
+    id: 'kakao',
+    navn: 'Varm kakao',
+    emoji: '☕',
     par: 2,
     beskrivelse:
-      'Smaker litt av ingenting, men ser bra ut på Instagram. Perfekt hvis du vil ha følelsen av å drikke uten smaken.',
+      'Varm, søt og alltid klar for en klem. Har aldri hatt en dårlig dag, bare for lite krem.',
   },
   {
-    id: 'shot',
-    navn: 'Shot',
-    emoji: '🥃',
-    par: 1,
+    id: 'eplejuice',
+    navn: 'Eplejuice',
+    emoji: '🍏',
+    par: 2,
     beskrivelse:
-      'Kort og brutal. Ingen forspill, ingen samtale, bare en dårlig idé som varer i to sekunder. Angrer sammen i morgen?',
+      'Sprek og frisk. Går alltid på tur før frokost og vil gjerne ha deg med.',
   },
   {
-    id: 'rodvin',
-    navn: 'Rødvin',
-    emoji: '🍷',
-    par: 4,
-    beskrivelse:
-      'Elsker å snurre glasset og late som jeg kan noe om druer. Farger tennene dine lilla og hemmelighetene dine røde.',
-  },
-  {
-    id: 'alkoholfri',
-    navn: 'Alkoholfri',
-    emoji: '🧃',
+    id: 'smoothie',
+    navn: 'Smoothie',
+    emoji: '🍓',
     par: 3,
     beskrivelse:
-      'Jeg er den som husker kvelden og sender vann til alle andre. Ingen dømming, bare bedre morgener og null angrende meldinger.',
+      'Har fått i seg fem grønnsaker før klokka ni og forteller deg det. Snilt, men tydelig.',
+  },
+  {
+    id: 'limonade',
+    navn: 'Limonade',
+    emoji: '🍋',
+    par: 2,
+    beskrivelse:
+      'Syrlig og morsom. Sier «livet ga meg sitroner» og mener det som en kompliment.',
+  },
+  {
+    id: 'appelsinbrus',
+    navn: 'Appelsinbrus',
+    emoji: '🍊',
+    par: 3,
+    beskrivelse:
+      'Bobler over av entusiasme. Kan ikke sitte stille, og rister litt hvis du åpner for fort.',
+  },
+  {
+    id: 'iste',
+    navn: 'Iste',
+    emoji: '🧊',
+    par: 2,
+    beskrivelse: 'Kul som en bris. Tar alt med ro, og alltid med isbiter.',
+  },
+  {
+    id: 'melk',
+    navn: 'Melk',
+    emoji: '🥛',
+    par: 2,
+    beskrivelse:
+      'Stødig og pålitelig. Gjør deg sterk, og ingen har noen gang angret på ham.',
+  },
+  {
+    id: 'saft',
+    navn: 'Solbærsaft',
+    emoji: '🧃',
+    par: 2,
+    beskrivelse:
+      'Konsentrert og søt. Må blandes med vann, men er alltid hovedpersonen.',
+  },
+  {
+    id: 'mineralvann',
+    navn: 'Mineralvann',
+    emoji: '💧',
+    par: 2,
+    beskrivelse:
+      'Klar, rolig og litt boblete. Forstår deg uten å si et eneste ord.',
+  },
+  {
+    id: 'mocktail',
+    navn: 'Mocktail',
+    emoji: '🍹',
+    par: 3,
+    beskrivelse:
+      'Paraply, frukt og null alkohol. Alle ser på henne, og hun elsker det.',
+  },
+  {
+    id: 'sjokolade',
+    navn: 'Sjokolademelk',
+    emoji: '🍫',
+    par: 3,
+    beskrivelse:
+      'Kakaoens glade fetter. Gjør alt bedre, spesielt etter en lang gåtur.',
+  },
+  {
+    id: 'cola',
+    navn: 'Cola',
+    emoji: '🥤',
+    par: 3,
+    beskrivelse:
+      'Svart, søt og full av bobler. Hopper først ut på dansegulvet, sies det.',
   },
 ];
-
-export const DRINKS: Drink[] = [...GRUNN_DRINKS, ...EKSTRA_DRINKS];
 
 export const drinkById = (id: DrinkId): Drink => {
   const drink = DRINKS.find((d) => d.id === id);

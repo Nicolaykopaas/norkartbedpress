@@ -496,3 +496,16 @@ button:active {
   70% { transform: scale(1.25); }
   100% { transform: scale(1); }
 }
+
+.gta-emoji {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 3px solid #fff;
+  box-shadow: 0 0 0 3px #000;
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+}

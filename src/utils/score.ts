@@ -59,7 +59,7 @@ export function golfNavn(diff: number): string {
 export function golfLinje(diff: number): string {
   const linjer: Record<string, string> = {
     ace: 'Ace! Chains! Rett i kjedene!',
-    '-3': 'Albatross! Det er sjeldnere enn Guinness uten kø.',
+    '-3': 'Albatross! Det er sjeldnere enn en ledig benk på Torvet.',
     '-2': 'Eagle! Ørnen har landet.',
     '-1': 'Birdie! Tweet tweet.',
     '0': 'Par. Solid, som en ren hyzer.',

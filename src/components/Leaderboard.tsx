@@ -27,10 +27,10 @@ export function Leaderboard({ hull, spillere, onNyRunde }: Props) {
   const [delt, setDelt] = useState<string | undefined>(undefined);
 
   const resultatTekst = [
-    `⛳ Pubgolf Trondheim – ${hull.length} hull, par ${hull.reduce((s, h) => s + h.par, 0)}`,
+    `🗺️ Byvandring i Trondheim – ${hull.length} steder, par ${hull.reduce((s, h) => s + h.par, 0)}`,
     ...rader.map(
       (r) =>
-        `${medaljer[r.plass - 1] ?? `${r.plass}.`} ${r.navn}: ${r.slag} slag (${motParTekst(r.motPar)})${r.splitTheG ? `, ${r.splitTheG}× Split the G` : ''}`
+        `${medaljer[r.plass - 1] ?? `${r.plass}.`} ${r.navn}: ${r.slag} slag (${motParTekst(r.motPar)})`
     ),
   ].join('\n');
 

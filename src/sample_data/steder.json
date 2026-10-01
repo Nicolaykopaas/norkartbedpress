@@ -1,0 +1,214 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.39506,
+          63.43049
+        ]
+      },
+      "properties": {
+        "id": "torvet",
+        "navn": "Torvet med Olav Tryggvason",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "🗿",
+        "fakta": "Byen ble grunnlagt her i år 997. Se opp på statuen på toppen av søylen."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3969,
+          63.4269
+        ]
+      },
+      "properties": {
+        "id": "nidarosdomen",
+        "navn": "Nidarosdomen",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "⛪",
+        "fakta": "Nord-Europas største middelalderkirke. Se etter de mange figurene på vestfronten."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4017,
+          63.42846
+        ]
+      },
+      "properties": {
+        "id": "gamle-bybro",
+        "navn": "Gamle Bybro",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "🌉",
+        "fakta": "Kalles Lykkens portal. Gå gjennom og si et ønske."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4112,
+          63.4283
+        ]
+      },
+      "properties": {
+        "id": "kristiansten",
+        "navn": "Kristiansten festning",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "🏰",
+        "fakta": "Her stoppet svenskene i 1718. Fra festningen ser du hele byen."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3928,
+          63.434
+        ]
+      },
+      "properties": {
+        "id": "ravnkloa",
+        "navn": "Ravnkloa",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "⚓",
+        "fakta": "Fisketorget ved kanalen. Herfra går båten til Munkholmen."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3954,
+          63.4297
+        ]
+      },
+      "properties": {
+        "id": "stiftsgarden",
+        "navn": "Stiftsgården",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "👑",
+        "fakta": "Skandinavias største tre-slott, og kongefamiliens bolig i Trondheim."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.403,
+          63.4319
+        ]
+      },
+      "properties": {
+        "id": "kjopmannsgata",
+        "navn": "Kjøpmannsgata",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "🏚️",
+        "fakta": "Gamle varelagre langs elva, som står tett i tett på hver sin påle."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.3942,
+          63.4225
+        ]
+      },
+      "properties": {
+        "id": "samfundet",
+        "navn": "Studentersamfundet",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "🔴",
+        "fakta": "Det røde runde huset der studentene lager festival, teater og revy."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4,
+          63.436
+        ]
+      },
+      "properties": {
+        "id": "sentralstasjon",
+        "navn": "Trondheim sentralstasjon",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "🚂",
+        "fakta": "Herfra tar du toget til både Oslo og Bodø."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.4023,
+          63.439
+        ]
+      },
+      "properties": {
+        "id": "rockheim",
+        "navn": "Rockheim",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "🎸",
+        "fakta": "Nasjonalt museum for pop og rock. Her kan du prøve instrumentene selv."
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          10.404,
+          63.429
+        ]
+      },
+      "properties": {
+        "id": "bakklandet",
+        "navn": "Bakklandet",
+        "pris": 0,
+        "happyHour": false,
+        "bydel": "Trondheim sentrum",
+        "emoji": "🏠",
+        "fakta": "Fargerike trehus og trange gater, med kafeer i hvert hjørne."
+      }
+    }
+  ]
+}

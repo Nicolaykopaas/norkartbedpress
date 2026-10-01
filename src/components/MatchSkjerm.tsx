@@ -21,13 +21,11 @@ export function MatchSkjerm({
   return (
     <Stack spacing={1.5} alignItems="center" textAlign="center">
       <Typography variant="h5" fontWeight={700}>
-        It's a match! 🍻
+        It's a match! 🎉
       </Typography>
       <Typography variant="body2">
         Du matchet med {antall} {antall === 1 ? 'drink' : 'drinker'}.
-        {antall === 1 &&
-          drinks[0] === 'pils' &&
-          ' Klassisk. Trygt. Litt kjedelig.'}
+        
       </Typography>
       <Stack
         direction="row"

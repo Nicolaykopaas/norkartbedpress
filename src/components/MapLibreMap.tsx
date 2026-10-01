@@ -1,17 +1,10 @@
 import { type RequestTransformFunction } from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
-import {
-  RLayer,
-  RMap,
-  RPopup,
-  RSource,
-  useMap,
-} from 'maplibre-react-components';
+import { RLayer, RMap, RSource, useMap } from 'maplibre-react-components';
 import { useEffect, useMemo, useState } from 'react';
 import type { FeatureCollection } from 'geojson';
-import { Box, Button, Chip, Stack, Typography } from '@mui/material';
+import { Button, Stack, Typography } from '@mui/material';
 import { Overlay } from './Overlay';
-import { PrisLegend } from './PilsLayer';
 import { EVENTER } from '../data/events';
 import { GaaMarker, IntroGange } from './Gaa';
 import { hentGangLinje, type Punkt } from '../utils/gange';
@@ -27,7 +20,7 @@ import { usePubgolf } from '../hooks/usePubgolf';
 import { haversineMeter, lagBane, lagBesteBane } from '../utils/bane';
 import { getBaneRute } from '../api/getBaneRute';
 import type { Bar, BarCollection, DrinkId } from '../types/pubgolf';
-import olpriser from '../sample_data/olpriser.json';
+import steder from '../sample_data/steder.json';
 
 // Torvet, midt i Midtbyen
 const TRONDHEIM_COORDS: [number, number] = [10.39506, 63.43049];
@@ -49,26 +42,11 @@ const NORKART_BASEMAP_STYLE = `${KVP_BASE_URL}norkart-basemap/${NORKART_BASEMAP_
 
 // Man sveiper til man har 7 matcher, og hver match blir ett hull
 const ANTALL_HULL = 7;
-const OPPSETT_KEY = 'pubgolf-oppsett-v1';
-const ALLE_BARER = olpriser as BarCollection;
-const SAMFUNDET: Punkt = (ALLE_BARER.features.find((b) =>
-  b.properties.navn.includes('Studentersamfundet')
-)?.geometry.coordinates as Punkt | undefined) ?? [10.3955, 63.4225];
-// Vi holder oss til Midtbyen (rundt Torvet) og Studentersamfundet
-const BARER: BarCollection = {
-  ...ALLE_BARER,
-  features: ALLE_BARER.features.filter(
-    (b) =>
-      b.properties.navn.includes('Studentersamfundet') ||
-      haversineMeter(
-        TRONDHEIM_COORDS,
-        b.geometry.coordinates as [number, number]
-      ) <= 650
-  ),
-};
-const ER_EKSEMPELDATA = BARER.features.some((f) =>
-  f.properties.id.startsWith('eksempel-')
-);
+const OPPSETT_KEY = 'byvandring-oppsett-v1';
+const BARER = steder as BarCollection;
+const SAMFUNDET: Punkt = (BARER.features.find(
+  (b) => b.properties.id === 'samfundet'
+)?.geometry.coordinates as Punkt | undefined) ?? [10.3942, 63.4225];
 
 type Fase = 'swipe' | 'match' | 'spillere' | 'spill';
 type Oppsett = { fase: Fase; drinks: DrinkId[]; startId?: string };
@@ -94,7 +72,6 @@ function lesOppsett(): Oppsett {
 
 export const MapLibreMap = () => {
   const [oppsett, setOppsett] = useState<Oppsett>(lesOppsett);
-  const [valgtBar, setValgtBar] = useState<Bar | undefined>(undefined);
   const [rute, setRute] = useState<
     { geometri: FeatureCollection; totalSekunder?: number } | undefined
   >(undefined);
@@ -140,7 +117,6 @@ export const MapLibreMap = () => {
     });
     if (bane.length === 0) return;
     const start = bane[0].bar;
-    setValgtBar(undefined);
     setRute(undefined);
     setOppsett((o) => ({
       ...o,
@@ -277,7 +253,6 @@ export const MapLibreMap = () => {
             >
               ← Tilbake
             </Button>
-            <PrisLegend barer={BARER} />
           </Stack>
         );
       case 'spill':
@@ -339,7 +314,6 @@ export const MapLibreMap = () => {
       style={{
         height: `calc(100dvh - var(--header-height))`,
       }}
-      onClick={() => setValgtBar(undefined)}
     >
       {hull.length > 0 && (
         <BaneLayer
@@ -394,31 +368,6 @@ export const MapLibreMap = () => {
           onFerdig={() => setIntro('ferdig')}
         />
       )}
-      {valgtBar && (
-        <RPopup
-          longitude={valgtBar.geometry.coordinates[0]}
-          latitude={valgtBar.geometry.coordinates[1]}
-          offset={12}
-        >
-          <Box sx={{ minWidth: 160 }}>
-            <Typography variant="subtitle2">
-              {valgtBar.properties.navn}
-            </Typography>
-            <Typography variant="body2">
-              {valgtBar.properties.pris},- for 0,5 l ·{' '}
-              {valgtBar.properties.bydel}
-            </Typography>
-            <Stack direction="row" spacing={0.5} sx={{ my: 0.5 }}>
-              {valgtBar.properties.happyHour && (
-                <Chip size="small" label="⏰ Happy hour" />
-              )}
-              {valgtBar.properties.guinness && (
-                <Chip size="small" label="🍀 Guinness" />
-              )}
-            </Stack>
-          </Box>
-        </RPopup>
-      )}
       {flyTil && <MapFlyTo lng={flyTil[0]} lat={flyTil[1]} />}
       {naerEvent && (
         <div className="gta">
@@ -427,18 +376,13 @@ export const MapLibreMap = () => {
             <small>{naerEvent.e.navn}</small>
           </div>
           <div className="gta-samtale">
-            {naerEvent.e.bilde && (
-              <img
-                src={`${import.meta.env.BASE_URL}${naerEvent.e.bilde}`}
-                alt={naerEvent.e.profil ?? naerEvent.e.navn}
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
-            )}
+            <div className="gta-emoji">{naerEvent.e.emoji}</div>
             <div className="gta-tekst">
-              <b>{naerEvent.e.profil ?? naerEvent.e.navn} ringer</b>
-              {naerEvent.e.tekst} Bare {naerEvent.m} m unna.
+              <b>{naerEvent.e.fra} ringer</b>
+              {naerEvent.e.tekst}{' '}
+              {naerEvent.m < 50
+                ? 'Du er rett ved siden av!'
+                : `Bare ${naerEvent.m} m unna.`}
               <br />
               <button
                 onClick={() => setLukkedeEventer((l) => [...l, naerEvent.e.id])}
@@ -494,20 +438,7 @@ export const MapLibreMap = () => {
             component="p"
             sx={{ mt: 1, color: 'text.secondary' }}
           >
-            {ER_EKSEMPELDATA ? (
-              'Eksempeldata (fiktive barer). Kjør skrapeskriptet for ekte priser.'
-            ) : (
-              <>
-                Priser:{' '}
-                <a
-                  href="https://www.pilsguiden.no/liste/trondelag/trondheim"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Pilsguiden.no
-                </a>
-              </>
-            )}
+            Kart, satellittbilder og rute: © Norkart
           </Typography>
         )}
       </Overlay>

@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import type { Spiller } from '../types/pubgolf';
 
-const KEY = 'pubgolf-v1';
+const KEY = 'byvandring-v1';
 
 export type PubgolfState = {
   spillere: Spiller[];

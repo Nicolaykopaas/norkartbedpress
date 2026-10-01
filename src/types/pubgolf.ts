@@ -1,30 +1,33 @@
-import type { EkstraId } from '../data/ekstra';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 
 export type BarProps = {
   id: string;
   navn: string;
-  /** Pris i kr for 0,5 l pils */
+  /** Ubrukt i familieversjonen (alltid 0) */
   pris: number;
   happyHour: boolean;
   bydel: string;
-  guinness?: boolean;
+  emoji?: string;
+  /** Kort morsom fakta om stedet */
+  fakta?: string;
 };
 
 export type Bar = Feature<Point, BarProps>;
 export type BarCollection = FeatureCollection<Point, BarProps>;
 
-export type GrunnDrinkId =
-  | 'pils'
-  | 'guinness'
-  | 'ipa'
-  | 'cider'
-  | 'seltzer'
-  | 'shot'
-  | 'rodvin'
-  | 'alkoholfri';
-
-export type DrinkId = GrunnDrinkId | EkstraId;
+export type DrinkId =
+  | 'kakao'
+  | 'eplejuice'
+  | 'smoothie'
+  | 'limonade'
+  | 'appelsinbrus'
+  | 'iste'
+  | 'melk'
+  | 'saft'
+  | 'mineralvann'
+  | 'mocktail'
+  | 'sjokolade'
+  | 'cola';
 
 export type Drink = {
   id: DrinkId;

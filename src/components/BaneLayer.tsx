@@ -50,7 +50,7 @@ export function BaneLayer({
               className={`bar-marker${aktiv ? ' aktiv' : ''}`}
               title={`Hull ${h.nr}: ${h.bar.properties.navn}`}
             >
-              <div className="bar-pris">{h.bar.properties.pris},-</div>
+              <div className="bar-pris">{h.bar.properties.emoji}</div>
               <BarLogo bar={h.bar.properties} nr={h.nr} />
             </div>
           </RMarker>

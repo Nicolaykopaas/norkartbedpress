@@ -63,11 +63,7 @@ export function lagBane(
       liste: { b: Bar; d: number }[],
       radius: number
     ): Bar | undefined => {
-      let inne = liste.filter((x) => x.d <= radius);
-      if (drink === 'guinness') {
-        const g = inne.filter((x) => x.b.properties.guinness);
-        if (g.length > 0) inne = g;
-      }
+      const inne = liste.filter((x) => x.d <= radius);
       inne.sort(
         (a, b) => a.d - b.d || a.b.properties.pris - b.b.properties.pris
       );
@@ -94,25 +90,16 @@ export function lagBane(
 }
 
 /**
- * Fordeler likte drinker på hullene i rekkefølge. Shot brukes maks én gang,
- * og da på siste hull. Uten likte drinker blir det pils.
+ * Fordeler likte drinker på stoppene i rekkefølge. Uten likte drinker blir det kakao.
  */
 export function drinkPlan(drinks: DrinkId[], antallHull: number): DrinkId[] {
-  const harShot = drinks.includes('shot');
-  const utenShot = drinks.filter((d) => d !== 'shot');
-  const liste: DrinkId[] = utenShot.length > 0 ? utenShot : ['pils'];
-  const plan = Array.from(
-    { length: antallHull },
-    (_, i) => liste[i % liste.length]
-  );
-  if (harShot && antallHull > 0) plan[antallHull - 1] = 'shot';
-  return plan;
+  const liste: DrinkId[] = drinks.length > 0 ? drinks : ['kakao'];
+  return Array.from({ length: antallHull }, (_, i) => liste[i % liste.length]);
 }
 
 /**
  * Planlegger banen automatisk ut fra swipene: prøver hver bar som start og
- * velger banen med kortest gangavstand, færrest prisøkninger og flest
- * Guinness-barer på Guinness-hullene.
+ * velger banen med kortest gangavstand.
  */
 export function lagBesteBane(
   barer: Bar[],
@@ -159,9 +146,6 @@ export function lagBesteBane(
         b.geometry.coordinates as [number, number]
       );
       if (b.properties.pris > a.properties.pris) score += 3000;
-    }
-    for (const h of bane) {
-      if (h.drink === 'guinness' && !h.bar.properties.guinness) score += 300;
     }
     if (score < besteScore) {
       besteScore = score;

@@ -214,6 +214,7 @@ function Illustrasjon({ id }: { id: DrinkId }) {
   return (
     <svg
       viewBox="0 0 200 200"
+      preserveAspectRatio="xMidYMid slice"
       width="100%"
       height="100%"
       role="img"
