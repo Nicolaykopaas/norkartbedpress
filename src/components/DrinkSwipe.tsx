@@ -9,11 +9,22 @@ const TERSKEL = 100;
 /** Man sveiper til man har så mange matcher */
 export const MAL_MATCHER = 7;
 
+function stokk<T>(liste: T[]): T[] {
+  const a = [...liste];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
 export function DrinkSwipe({
   onFerdig,
 }: {
   onFerdig: (valgte: DrinkId[]) => void;
 }) {
+  // Ny rekkefølge hver runde
+  const [kort] = useState(() => stokk(DRINKS));
   const [indeks, setIndeks] = useState(0);
   const [valgte, setValgte] = useState<DrinkId[]>([]);
   const [dx, setDx] = useState(0);
@@ -25,7 +36,7 @@ export function DrinkSwipe({
   const avgjor = useCallback(
     (ja: boolean) => {
       if (ferdigKalt.current || flyr !== 0) return;
-      const drink = DRINKS[indeks];
+      const drink = kort[indeks];
       const nyeValgte = ja ? [...valgte, drink.id] : valgte;
       startX.current = null;
       setDrar(false);
@@ -34,7 +45,7 @@ export function DrinkSwipe({
       setTimeout(() => {
         setFlyr(0);
         setDx(0);
-        if (nyeValgte.length >= MAL_MATCHER || indeks + 1 >= DRINKS.length) {
+        if (nyeValgte.length >= MAL_MATCHER || indeks + 1 >= kort.length) {
           ferdigKalt.current = true;
           onFerdig(nyeValgte.length > 0 ? nyeValgte : ['pils']);
         } else {
@@ -55,8 +66,8 @@ export function DrinkSwipe({
     return () => window.removeEventListener('keydown', onKey);
   }, [avgjor]);
 
-  const drink = DRINKS[indeks];
-  const neste = DRINKS[indeks + 1];
+  const drink = kort[indeks];
+  const neste = kort[indeks + 1];
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (flyr !== 0) return;

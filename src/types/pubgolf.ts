@@ -1,3 +1,4 @@
+import type { EkstraId } from '../data/ekstra';
 import type { Feature, FeatureCollection, Point } from 'geojson';
 
 export type BarProps = {
@@ -13,7 +14,7 @@ export type BarProps = {
 export type Bar = Feature<Point, BarProps>;
 export type BarCollection = FeatureCollection<Point, BarProps>;
 
-export type DrinkId =
+export type GrunnDrinkId =
   | 'pils'
   | 'guinness'
   | 'ipa'
@@ -23,6 +24,8 @@ export type DrinkId =
   | 'gintonic'
   | 'rodvin'
   | 'alkoholfri';
+
+export type DrinkId = GrunnDrinkId | EkstraId;
 
 export type Drink = {
   id: DrinkId;

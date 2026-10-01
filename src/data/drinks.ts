@@ -1,6 +1,7 @@
 import type { Drink, DrinkId } from '../types/pubgolf';
+import { EKSTRA_DRINKS } from './ekstra';
 
-export const DRINKS: Drink[] = [
+const GRUNN_DRINKS: Drink[] = [
   {
     id: 'pils',
     navn: 'Pils',
@@ -74,6 +75,8 @@ export const DRINKS: Drink[] = [
       'Jeg er den som husker kvelden og sender vann til alle andre. Ingen dømming, bare bedre morgener og null angrende meldinger.',
   },
 ];
+
+export const DRINKS: Drink[] = [...GRUNN_DRINKS, ...EKSTRA_DRINKS];
 
 export const drinkById = (id: DrinkId): Drink => {
   const drink = DRINKS.find((d) => d.id === id);

@@ -19,8 +19,8 @@ export const EVENTER: SpecialEvent[] = [
     tekst: 'Vodka-vinar: shot-deal i kveld. Kom innom!',
     lng: 10.3962,
     lat: 63.4297,
-    bilde: 'events/vodka-vinar.png',
-    profil: 'Shot-Stian, 27',
+    bilde: 'drinks/sprit.png',
+    profil: 'Sprit-Svein, 48',
   },
   {
     id: 'bakklandet-quiz',

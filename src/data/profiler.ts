@@ -1,4 +1,5 @@
-import type { DrinkId } from '../types/pubgolf';
+import type { DrinkId, GrunnDrinkId } from '../types/pubgolf';
+import { EKSTRA_PROFILER } from './ekstra';
 
 export type Glass =
   'pint' | 'stout' | 'boks' | 'shot' | 'highball' | 'vin' | 'flaske';
@@ -17,7 +18,7 @@ export type Profil = {
   skjegg?: boolean;
 };
 
-export const PROFILER: Record<DrinkId, Profil> = {
+const GRUNN_PROFILER: Record<GrunnDrinkId, Profil> = {
   pils: {
     profilnavn: 'Pils-Per',
     alder: 34,
@@ -123,4 +124,9 @@ export const PROFILER: Record<DrinkId, Profil> = {
     glass: 'flaske',
     drikke: '#65a30d',
   },
+};
+
+export const PROFILER: Record<DrinkId, Profil> = {
+  ...GRUNN_PROFILER,
+  ...EKSTRA_PROFILER,
 };
