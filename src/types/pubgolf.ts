@@ -18,7 +18,6 @@ export type KategoriId =
 export type Kategori = {
   id: KategoriId;
   navn: string;
-  emoji: string;
   /** Farge på ikonet i kartet */
   farge: string;
   /** Hva du gjør her, brukt i «Her skal du …» */
@@ -27,12 +26,21 @@ export type Kategori = {
   fakta: string;
 };
 
+/** Ekte foto fra Wikimedia Commons med kreditering */
+export type Foto = {
+  url: string;
+  side: string;
+  forfatter: string;
+  lisens: string;
+};
+
 export type StedProps = {
   id: string;
   navn: string;
   kategori: KategoriId;
   /** Kort morsom fakta om stedet */
   fakta?: string;
+  foto?: Foto;
 };
 
 export type Sted = Feature<Point, StedProps>;

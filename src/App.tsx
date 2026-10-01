@@ -5,15 +5,17 @@ import './index.css';
 
 const tema = createTheme({
   palette: {
-    mode: 'dark',
-    primary: { main: '#ff2bd6' },
-    secondary: { main: '#00e5ff' },
-    success: { main: '#39ff14', contrastText: '#000' },
-    warning: { main: '#ffd600', contrastText: '#000' },
-    background: { default: '#0b0618', paper: '#150b2e' },
+    mode: 'light',
+    primary: { main: '#0f5c8a' },
+    secondary: { main: '#0f8ad6' },
+    success: { main: '#2e7d32' },
+    background: { default: '#f4f6f8', paper: '#ffffff' },
+    text: { primary: '#1b2a35', secondary: '#5b6b76' },
   },
-  shape: { borderRadius: 14 },
-  typography: { button: { fontWeight: 800 } },
+  shape: { borderRadius: 10 },
+  typography: {
+    button: { fontWeight: 700, textTransform: 'none' },
+  },
 });
 
 function App() {

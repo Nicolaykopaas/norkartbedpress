@@ -13,7 +13,13 @@
    "properties": {
     "id": "bowling-dora-1-bowling-biljard",
     "navn": "Dora 1 Bowling & Biljard",
-    "kategori": "bowling"
+    "kategori": "bowling",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f5/Dora_%22Who_ya_gonna_call%3F%22_%282009%29_%283843831278%29.jpg/960px-Dora_%22Who_ya_gonna_call%3F%22_%282009%29_%283843831278%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Dora_%22Who_ya_gonna_call%3F%22_(2009)_(3843831278).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -28,7 +34,13 @@
    "properties": {
     "id": "badstue-sjobadet",
     "navn": "Sjøbadet",
-    "kategori": "badstue"
+    "kategori": "badstue",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9b/Sj%C3%B8badet_i_Trondheim_%285779821895%29.jpg/960px-Sj%C3%B8badet_i_Trondheim_%285779821895%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Sj%C3%B8badet_i_Trondheim_(5779821895).jpg",
+     "forfatter": "Trondheim Havn from Trondheim, Norway",
+     "lisens": "CC BY-SA 2.0"
+    }
    }
   },
   {
@@ -103,7 +115,13 @@
    "properties": {
     "id": "lekeplass-marinen-lekeplass",
     "navn": "Marinen lekeplass",
-    "kategori": "lekeplass"
+    "kategori": "lekeplass",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Marinen_og_Nidelva_%284031673068%29.jpg/960px-Marinen_og_Nidelva_%284031673068%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Marinen_og_Nidelva_(4031673068).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -148,7 +166,13 @@
    "properties": {
     "id": "lekeplass-schoyens-gt-10",
     "navn": "Schøyens gt 10",
-    "kategori": "lekeplass"
+    "kategori": "lekeplass",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Sch%C3%B8yens_gate_10%2C_Trondheim.jpg/960px-Sch%C3%B8yens_gate_10%2C_Trondheim.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Sch%C3%B8yens_gate_10,_Trondheim.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -178,7 +202,13 @@
    "properties": {
     "id": "park-stiftsgardsparken",
     "navn": "Stiftsgårdsparken",
-    "kategori": "park"
+    "kategori": "park",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6c/Stiftsg%C3%A5rdsparken.jpg/960px-Stiftsg%C3%A5rdsparken.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Stiftsg%C3%A5rdsparken.jpg",
+     "forfatter": "Pbb",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -223,7 +253,13 @@
    "properties": {
     "id": "park-archidiakoni-plass",
     "navn": "Archidiakoni plass",
-    "kategori": "park"
+    "kategori": "park",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Archidiakoni_plass_Kulturmilj%C3%B8_Midtbyen-Cicignon_Trondheim_2026-01-11_01.jpg/960px-Archidiakoni_plass_Kulturmilj%C3%B8_Midtbyen-Cicignon_Trondheim_2026-01-11_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Archidiakoni_plass_Kulturmilj%C3%B8_Midtbyen-Cicignon_Trondheim_2026-01-11_01.jpg",
+     "forfatter": "Leonhard Lenz",
+     "lisens": "CC0"
+    }
    }
   },
   {
@@ -238,7 +274,13 @@
    "properties": {
     "id": "park-e-c-dahls-park",
     "navn": "E.C. Dahls park",
-    "kategori": "park"
+    "kategori": "park",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5d/E._C._Dahlsparken_-_Bispegata_12_-_16_%284058001620%29.jpg/960px-E._C._Dahlsparken_-_Bispegata_12_-_16_%284058001620%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:E._C._Dahlsparken_-_Bispegata_12_-_16_(4058001620).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -253,7 +295,13 @@
    "properties": {
     "id": "park-bybroparken",
     "navn": "Bybroparken",
-    "kategori": "park"
+    "kategori": "park",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/67/Nidelva_seen_from_Bybroparken_Kulturmilj%C3%B8_Domkirkeomr%C3%A5det_Trondheim_2026-01-12_03.jpg/960px-Nidelva_seen_from_Bybroparken_Kulturmilj%C3%B8_Domkirkeomr%C3%A5det_Trondheim_2026-01-12_03.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Nidelva_seen_from_Bybroparken_Kulturmilj%C3%B8_Domkirkeomr%C3%A5det_Trondheim_2026-01-12_03.jpg",
+     "forfatter": "Leonhard Lenz",
+     "lisens": "CC0"
+    }
    }
   },
   {
@@ -298,7 +346,13 @@
    "properties": {
     "id": "park-hospitalsparken",
     "navn": "Hospitalsparken",
-    "kategori": "park"
+    "kategori": "park",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Hospitalsparken_Trondheim_2026-01-12_01.jpg/960px-Hospitalsparken_Trondheim_2026-01-12_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Hospitalsparken_Trondheim_2026-01-12_01.jpg",
+     "forfatter": "Leonhard Lenz",
+     "lisens": "CC0"
+    }
    }
   },
   {
@@ -313,7 +367,13 @@
    "properties": {
     "id": "park-marinen",
     "navn": "Marinen",
-    "kategori": "park"
+    "kategori": "park",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1a/Marinen_og_Nidelva_%284031673068%29.jpg/960px-Marinen_og_Nidelva_%284031673068%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Marinen_og_Nidelva_(4031673068).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -343,7 +403,13 @@
    "properties": {
     "id": "kino-prinsen-kinosenter",
     "navn": "Prinsen Kinosenter",
-    "kategori": "kino"
+    "kategori": "kino",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Cirkus_i_Prinsens_gate_%281922%29_%283412109379%29.jpg/960px-Cirkus_i_Prinsens_gate_%281922%29_%283412109379%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Cirkus_i_Prinsens_gate_(1922)_(3412109379).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -358,7 +424,13 @@
    "properties": {
     "id": "kino-nova-kino",
     "navn": "Nova kino",
-    "kategori": "kino"
+    "kategori": "kino",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b1/Sentrum_kino_Rochelle%2C_Rochelle_%281993%29_%2840520547813%29.jpg/960px-Sentrum_kino_Rochelle%2C_Rochelle_%281993%29_%2840520547813%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Sentrum_kino_Rochelle,_Rochelle_(1993)_(40520547813).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -388,7 +460,13 @@
    "properties": {
     "id": "museum-nordenfjeldske-kunstindustrimuseum",
     "navn": "Nordenfjeldske Kunstindustrimuseum",
-    "kategori": "museum"
+    "kategori": "museum",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b3/Nordenfjeldske_Kunstindustrimuseum%2C_Munkegata_i_Trondheim.jpg/960px-Nordenfjeldske_Kunstindustrimuseum%2C_Munkegata_i_Trondheim.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Nordenfjeldske_Kunstindustrimuseum,_Munkegata_i_Trondheim.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -403,7 +481,13 @@
    "properties": {
     "id": "museum-kunsthall-trondheim",
     "navn": "Kunsthall Trondheim",
-    "kategori": "museum"
+    "kategori": "museum",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b0/Kunsthall_Trondheim.jpg/960px-Kunsthall_Trondheim.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Kunsthall_Trondheim.jpg",
+     "forfatter": "Pbb",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -418,7 +502,13 @@
    "properties": {
     "id": "museum-pomo",
     "navn": "PoMo",
-    "kategori": "museum"
+    "kategori": "museum",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/25/PoMo_kunstmuseum_opening_day_I.jpg/960px-PoMo_kunstmuseum_opening_day_I.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:PoMo_kunstmuseum_opening_day_I.jpg",
+     "forfatter": "Kjersti Lie",
+     "lisens": "CC BY 4.0"
+    }
    }
   },
   {
@@ -463,7 +553,13 @@
    "properties": {
     "id": "museum-trondheim-kunstmuseum-bispegata",
     "navn": "Trondheim Kunstmuseum Bispegata",
-    "kategori": "museum"
+    "kategori": "museum",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d2/Trondheim_kunstmuseum_Gunvor_Nervold_Antonsen_Oct_2019.jpg/960px-Trondheim_kunstmuseum_Gunvor_Nervold_Antonsen_Oct_2019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Trondheim_kunstmuseum_Gunvor_Nervold_Antonsen_Oct_2019.jpg",
+     "forfatter": "Swadim",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -478,7 +574,13 @@
    "properties": {
     "id": "museum-trondhjems-kunstforening",
     "navn": "Trondhjems Kunstforening",
-    "kategori": "museum"
+    "kategori": "museum",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0c/Trondhjems_Kunstforening_Bispegata_9_A_%283883076741%29.jpg/960px-Trondhjems_Kunstforening_Bispegata_9_A_%283883076741%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Trondhjems_Kunstforening_Bispegata_9_A_(3883076741).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -493,7 +595,13 @@
    "properties": {
     "id": "museum-norsk-dovemuseum",
     "navn": "Norsk Døvemuseum",
-    "kategori": "museum"
+    "kategori": "museum",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9e/Norsk_D%C3%B8vemuseum_Trondheim%2C_2019.jpg/960px-Norsk_D%C3%B8vemuseum_Trondheim%2C_2019.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Norsk_D%C3%B8vemuseum_Trondheim,_2019.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -508,7 +616,13 @@
    "properties": {
     "id": "museum-kjopmannsgata-ung-kunst",
     "navn": "Kjøpmannsgata Ung Kunst",
-    "kategori": "museum"
+    "kategori": "museum",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Kj%C3%B8pmannsgata_38%2C_Trondheim.jpg/960px-Kj%C3%B8pmannsgata_38%2C_Trondheim.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Kj%C3%B8pmannsgata_38,_Trondheim.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -523,7 +637,13 @@
    "properties": {
     "id": "scene-byscenen",
     "navn": "Byscenen",
-    "kategori": "scene"
+    "kategori": "scene",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b7/Byscenen%2C_Trondheim_2020.jpg/960px-Byscenen%2C_Trondheim_2020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Byscenen,_Trondheim_2020.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -568,7 +688,13 @@
    "properties": {
     "id": "scene-nye-hjorten-teater",
     "navn": "Nye Hjorten Teater",
-    "kategori": "scene"
+    "kategori": "scene",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/The_chandelier_in_Nye_Hjorten_Teaters_foyer.jpg/960px-The_chandelier_in_Nye_Hjorten_Teaters_foyer.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:The_chandelier_in_Nye_Hjorten_Teaters_foyer.jpg",
+     "forfatter": "Kjersti Lie",
+     "lisens": "CC BY 4.0"
+    }
    }
   },
   {
@@ -598,7 +724,13 @@
    "properties": {
     "id": "scene-galleri-thora",
     "navn": "Galleri Thora",
-    "kategori": "scene"
+    "kategori": "scene",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/54/Suhms_gate_og_Thora_Storm_videreg%C3%A5ende_skole._Trondheim.jpg/960px-Suhms_gate_og_Thora_Storm_videreg%C3%A5ende_skole._Trondheim.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Suhms_gate_og_Thora_Storm_videreg%C3%A5ende_skole._Trondheim.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -643,7 +775,13 @@
    "properties": {
     "id": "scene-olavshallen",
     "navn": "Olavshallen",
-    "kategori": "scene"
+    "kategori": "scene",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5e/Olavshallen%2C_Trondheim_2020.jpg/960px-Olavshallen%2C_Trondheim_2020.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Olavshallen,_Trondheim_2020.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -658,7 +796,13 @@
    "properties": {
     "id": "scene-bakklandet-ramme-og-kunst",
     "navn": "Bakklandet ramme og kunst",
-    "kategori": "scene"
+    "kategori": "scene",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/%C3%98vre_Bakklandet_1B.jpg/960px-%C3%98vre_Bakklandet_1B.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:%C3%98vre_Bakklandet_1B.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -764,7 +908,13 @@
     "id": "torvet",
     "navn": "Torvet med Olav Tryggvason",
     "kategori": "se",
-    "fakta": "Byen ble grunnlagt her i år 997. Se opp på statuen på toppen av søylen."
+    "fakta": "Byen ble grunnlagt her i år 997. Se opp på statuen på toppen av søylen.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Nidarosdomen_og_Olav_Tryggvason-monumentet_%284033581859%29.jpg/960px-Nidarosdomen_og_Olav_Tryggvason-monumentet_%284033581859%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Nidarosdomen_og_Olav_Tryggvason-monumentet_(4033581859).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -780,7 +930,13 @@
     "id": "nidarosdomen",
     "navn": "Nidarosdomen",
     "kategori": "se",
-    "fakta": "Nord-Europas største middelalderkirke. Se etter de mange figurene på vestfronten."
+    "fakta": "Nord-Europas største middelalderkirke. Se etter de mange figurene på vestfronten.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/1/1e/Interior_of_Nidaros_Cathedral_-_Trondheim%2C_Norway_-_panoramio.jpg/960px-Interior_of_Nidaros_Cathedral_-_Trondheim%2C_Norway_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Interior_of_Nidaros_Cathedral_-_Trondheim,_Norway_-_panoramio.jpg",
+     "forfatter": "Sergey Ashmarin",
+     "lisens": "CC BY-SA 3.0"
+    }
    }
   },
   {
@@ -796,7 +952,13 @@
     "id": "gamle-bybro",
     "navn": "Gamle Bybro",
     "kategori": "se",
-    "fakta": "Kalles Lykkens portal. Gå gjennom og si et ønske."
+    "fakta": "Kalles Lykkens portal. Gå gjennom og si et ønske.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bd/Nidelva_sett_fra_Gamle_Bybro%2C_2023.jpg/960px-Nidelva_sett_fra_Gamle_Bybro%2C_2023.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Nidelva_sett_fra_Gamle_Bybro,_2023.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -812,7 +974,13 @@
     "id": "kristiansten",
     "navn": "Kristiansten festning",
     "kategori": "se",
-    "fakta": "Her stoppet svenskene i 1718. Fra festningen ser du hele byen."
+    "fakta": "Her stoppet svenskene i 1718. Fra festningen ser du hele byen.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/46/Kristiansten_festning_Trondheim_2022-08-18_01.jpg/960px-Kristiansten_festning_Trondheim_2022-08-18_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Kristiansten_festning_Trondheim_2022-08-18_01.jpg",
+     "forfatter": "Leonhard Lenz",
+     "lisens": "CC0"
+    }
    }
   },
   {
@@ -828,7 +996,13 @@
     "id": "ravnkloa",
     "navn": "Ravnkloa",
     "kategori": "se",
-    "fakta": "Fisketorget ved kanalen. Herfra går båten til Munkholmen."
+    "fakta": "Fisketorget ved kanalen. Herfra går båten til Munkholmen.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Ravnkloa_%28ca._1915%29_%284807959249%29.jpg/960px-Ravnkloa_%28ca._1915%29_%284807959249%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Ravnkloa_(ca._1915)_(4807959249).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -844,7 +1018,13 @@
     "id": "stiftsgarden",
     "navn": "Stiftsgården",
     "kategori": "se",
-    "fakta": "Skandinavias største tre-slott, og kongefamiliens bolig i Trondheim."
+    "fakta": "Skandinavias største tre-slott, og kongefamiliens bolig i Trondheim.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/70/Folketoget_i_Trondheim_p%C3%A5_Grunnlovsdagen_-_17_Mai_%281945%29_%284327699920%29.jpg/960px-Folketoget_i_Trondheim_p%C3%A5_Grunnlovsdagen_-_17_Mai_%281945%29_%284327699920%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Folketoget_i_Trondheim_p%C3%A5_Grunnlovsdagen_-_17_Mai_(1945)_(4327699920).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -860,7 +1040,13 @@
     "id": "kjopmannsgata",
     "navn": "Kjøpmannsgata",
     "kategori": "se",
-    "fakta": "Gamle varelagre langs elva, som står tett i tett på hver sin påle."
+    "fakta": "Gamle varelagre langs elva, som står tett i tett på hver sin påle.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/4/45/Hj%C3%B8rnet_Kj%C3%B8pmannsgata_-_Dronningens_gate_%284031603066%29.jpg/960px-Hj%C3%B8rnet_Kj%C3%B8pmannsgata_-_Dronningens_gate_%284031603066%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Hj%C3%B8rnet_Kj%C3%B8pmannsgata_-_Dronningens_gate_(4031603066).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   },
   {
@@ -876,7 +1062,13 @@
     "id": "samfundet",
     "navn": "Studentersamfundet",
     "kategori": "se",
-    "fakta": "Det røde runde huset der studentene lager festival, teater og revy."
+    "fakta": "Det røde runde huset der studentene lager festival, teater og revy.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bc/Studentersamfundet_Trondheim_2022-08-18_01.jpg/960px-Studentersamfundet_Trondheim_2022-08-18_01.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Studentersamfundet_Trondheim_2022-08-18_01.jpg",
+     "forfatter": "Leonhard Lenz",
+     "lisens": "CC0"
+    }
    }
   },
   {
@@ -892,7 +1084,13 @@
     "id": "sentralstasjon",
     "navn": "Trondheim sentralstasjon",
     "kategori": "se",
-    "fakta": "Herfra tar du toget til både Oslo og Bodø."
+    "fakta": "Herfra tar du toget til både Oslo og Bodø.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/6/66/Trondheim_Sentralstasjon_%287919548760%29.jpg/960px-Trondheim_Sentralstasjon_%287919548760%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Trondheim_Sentralstasjon_(7919548760).jpg",
+     "forfatter": "Trondheim Havn from Trondheim, Norway",
+     "lisens": "CC BY-SA 2.0"
+    }
    }
   },
   {
@@ -908,7 +1106,13 @@
     "id": "rockheim",
     "navn": "Rockheim",
     "kategori": "se",
-    "fakta": "Nasjonalt museum for pop og rock. Her kan du prøve instrumentene selv."
+    "fakta": "Nasjonalt museum for pop og rock. Her kan du prøve instrumentene selv.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c4/Mentometer_Rockheim.jpeg/960px-Mentometer_Rockheim.jpeg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Mentometer_Rockheim.jpeg",
+     "forfatter": "Kjetil Ree",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -924,7 +1128,13 @@
     "id": "bakklandet",
     "navn": "Bakklandet",
     "kategori": "se",
-    "fakta": "Fargerike trehus og trange gater, med kafeer i hvert hjørne."
+    "fakta": "Fargerike trehus og trange gater, med kafeer i hvert hjørne.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f3/Nedre_Bakklandet_21B%2C_Trondheim.jpg/960px-Nedre_Bakklandet_21B%2C_Trondheim.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Nedre_Bakklandet_21B,_Trondheim.jpg",
+     "forfatter": "Ssu",
+     "lisens": "CC BY-SA 4.0"
+    }
    }
   },
   {
@@ -940,7 +1150,13 @@
     "id": "midtbyrunden",
     "navn": "Midtbyrunden",
     "kategori": "tur",
-    "fakta": "En merket byvandring gjennom sentrum. Følg skiltene og les om stedene du går forbi."
+    "fakta": "En merket byvandring gjennom sentrum. Følg skiltene og les om stedene du går forbi.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9c/2010-08-04_-_Trondheim_-_rechts_oben_die_Kristiansten_Festung_-_panoramio.jpg/960px-2010-08-04_-_Trondheim_-_rechts_oben_die_Kristiansten_Festung_-_panoramio.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:2010-08-04_-_Trondheim_-_rechts_oben_die_Kristiansten_Festung_-_panoramio.jpg",
+     "forfatter": "giggel",
+     "lisens": "CC BY 3.0"
+    }
    }
   },
   {
@@ -956,7 +1172,13 @@
     "id": "ladestien",
     "navn": "Ladestien (Ladehammeren)",
     "kategori": "tur",
-    "fakta": "Turstien langs fjorden fra Ladehammeren. Fin for en lang tur med utsikt over Trondheimsfjorden."
+    "fakta": "Turstien langs fjorden fra Ladehammeren. Fin for en lang tur med utsikt over Trondheimsfjorden.",
+    "foto": {
+     "url": "https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c3/Brann_i_NSBs_kullager_%281977%29_%284175540049%29.jpg/960px-Brann_i_NSBs_kullager_%281977%29_%284175540049%29.jpg?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail",
+     "side": "https://commons.wikimedia.org/wiki/File:Brann_i_NSBs_kullager_(1977)_(4175540049).jpg",
+     "forfatter": "Municipal Archives of Trondheim from Trondheim, Norway",
+     "lisens": "CC BY 2.0"
+    }
    }
   }
  ]

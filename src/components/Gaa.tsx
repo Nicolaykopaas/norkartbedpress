@@ -19,7 +19,6 @@ function posisjon(linje: Punkt[], lengder: number[], t: number): Punkt {
 export function GaaMarker({
   linje,
   varighetMs,
-  ikon,
   loop,
   folg,
   klasse,
@@ -27,7 +26,6 @@ export function GaaMarker({
 }: {
   linje: Punkt[];
   varighetMs: number;
-  ikon: string;
   loop?: boolean;
   folg?: boolean;
   klasse?: string;
@@ -71,7 +69,7 @@ export function GaaMarker({
 
   return (
     <RMarker longitude={pos[0]} latitude={pos[1]}>
-      <div className={`gaa ${klasse ?? ''}`}>{ikon}</div>
+      <div className={`gaa-prikk ${klasse ?? ''}`} />
     </RMarker>
   );
 }
@@ -97,13 +95,5 @@ export function IntroGange({
     };
   }, [fra, til]);
   if (!linje) return null;
-  return (
-    <GaaMarker
-      linje={linje}
-      varighetMs={9000}
-      ikon="🚶‍♂️"
-      folg
-      onFerdig={onFerdig}
-    />
-  );
+  return <GaaMarker linje={linje} varighetMs={9000} folg onFerdig={onFerdig} />;
 }

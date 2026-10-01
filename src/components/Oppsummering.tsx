@@ -18,11 +18,11 @@ export function Oppsummering({
   const antallGjort = hull.filter((_, i) => tur.gjort[i]).length;
 
   const tekst = [
-    `🗺️ Byvandring i Trondheim: ${antallGjort} av ${hull.length} stopp`,
-    ...hull.map((h, i) => {
-      const k = kategoriById(h.kategori);
-      return `${tur.gjort[i] ? '✅' : '⏭'} ${k.emoji} ${h.sted.properties.navn}`;
-    }),
+    `Byvandring i Trondheim: ${antallGjort} av ${hull.length} stopp`,
+    ...hull.map(
+      (h, i) =>
+        `${tur.gjort[i] ? 'Gjort' : 'Hoppet over'}: ${h.sted.properties.navn}`
+    ),
   ].join('\n');
 
   const del = async () => {
@@ -35,41 +35,29 @@ export function Oppsummering({
   };
 
   return (
-    <Box sx={{ p: 1, width: '100%', maxWidth: 360 }}>
-      <Typography sx={{ fontSize: 26, fontWeight: 900 }}>
-        Turen er ferdig! 🎉
+    <Box sx={{ width: '100%', maxWidth: 380 }}>
+      <Typography sx={{ fontSize: 22, fontWeight: 800 }}>
+        Turen er ferdig
       </Typography>
-      <Typography sx={{ fontSize: 16, mb: 1 }}>
+      <Typography sx={{ fontSize: 15, mb: 1, color: 'text.secondary' }}>
         {antallGjort} av {hull.length} stopp gjennomført
         {totalSekunder
           ? ` · ca. ${Math.round(totalSekunder / 60)} min gange`
           : ''}
       </Typography>
       <Stack spacing={0.5} sx={{ mb: 1.5 }}>
-        {hull.map((h, i) => {
-          const k = kategoriById(h.kategori);
-          return (
-            <Typography key={h.sted.properties.id} sx={{ fontSize: 16 }} noWrap>
-              {tur.gjort[i] ? '✅' : '⏭'} {k.emoji} {h.sted.properties.navn}
-            </Typography>
-          );
-        })}
+        {hull.map((h, i) => (
+          <Typography key={h.sted.properties.id} sx={{ fontSize: 15 }} noWrap>
+            {tur.gjort[i] ? 'Gjort' : 'Hoppet over'} ·{' '}
+            {kategoriById(h.kategori).navn}: {h.sted.properties.navn}
+          </Typography>
+        ))}
       </Stack>
-      <Button
-        fullWidth
-        variant="contained"
-        onClick={del}
-        sx={{ height: 56, fontSize: 18, fontWeight: 800 }}
-      >
-        Del turen 📤
+      <Button fullWidth variant="contained" onClick={del} sx={{ height: 48 }}>
+        Del turen
       </Button>
-      <Button
-        fullWidth
-        color="secondary"
-        onClick={onNyTur}
-        sx={{ mt: 0.5, height: 48, fontWeight: 800 }}
-      >
-        Ny tur ↺
+      <Button fullWidth color="inherit" onClick={onNyTur} sx={{ mt: 0.5 }}>
+        Ny tur
       </Button>
     </Box>
   );

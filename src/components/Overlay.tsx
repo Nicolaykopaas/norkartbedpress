@@ -10,15 +10,12 @@ export function Overlay({
       className={className}
       style={{
         position: 'relative',
-        backgroundColor: 'rgba(14, 6, 34, 0.86)',
-        backdropFilter: 'blur(10px)',
-        color: '#fff',
-        border: '1px solid rgba(255, 43, 214, 0.6)',
-        borderRadius: '20px',
-        padding: '20px',
+        backgroundColor: '#ffffff',
+        color: '#1b2a35',
+        borderRadius: '14px',
+        padding: '16px',
         width: 'fit-content',
-        boxShadow:
-          '0 0 18px rgba(255, 43, 214, 0.45), 0 0 40px rgba(0, 229, 255, 0.2)',
+        boxShadow: '0 4px 20px rgba(15, 59, 87, 0.22)',
         ...style,
       }}
     >

@@ -1,9 +1,9 @@
 import { RMarker } from 'maplibre-react-components';
 import type { Hull } from '../types/pubgolf';
 import { kategoriById } from '../data/kategorier';
-import { Pin } from './Pin';
+import { StedPin } from './StedPin';
 
-/** Stoppene på turen som nummererte ikoner med navnet svevende over. */
+/** Stoppene på turen: nummererte bilder med navnet over. */
 export function BaneLayer({
   hull,
   aktivtHull,
@@ -17,7 +17,6 @@ export function BaneLayer({
     <>
       {hull.map((h, i) => {
         const [lng, lat] = h.sted.geometry.coordinates;
-        const aktiv = i === aktivtHull;
         return (
           <RMarker
             key={h.sted.properties.id}
@@ -29,11 +28,15 @@ export function BaneLayer({
             }}
           >
             <div
-              className={`bar-marker${aktiv ? ' aktiv' : ''}`}
+              className={`pin-marker${i === aktivtHull ? ' aktiv' : ''}`}
               title={`Stopp ${h.nr}: ${h.sted.properties.navn}`}
             >
-              <div className="bar-pris">{h.sted.properties.navn}</div>
-              <Pin kategori={kategoriById(h.kategori)} nr={h.nr} />
+              <div className="pin-navn">{h.sted.properties.navn}</div>
+              <StedPin
+                sted={h.sted}
+                kategori={kategoriById(h.kategori)}
+                nr={h.nr}
+              />
             </div>
           </RMarker>
         );
