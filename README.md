@@ -1,48 +1,58 @@
 # VisitTrondheim
 
-Kartapp for å finne på ting i Trondheim sentrum, laget for familier. Uoffisielt prosjekt, ikke tilknyttet Visit Trondheim.
+Et kart som hjelper familier å finne på noe i Trondheim sentrum. Du velger hvor lang tid dere har og hva dere har lyst til, og appen lager en gåtur for dere.
 
-Live: https://nicolaykopaas.github.io/norkartbedpress/
+**[Prøv appen her](https://nicolaykopaas.github.io/norkartbedpress/)**
 
-## Funksjoner
+Dette er et eget prosjekt og har ingenting med Visit Trondheim å gjøre.
 
-- Utforsk: steder på satellittkart med bilde, søk og filter.
-- Min tur: velg tid og hva dere vil gjøre, så settes det opp en gåtur fra Torvet med kortest mulig gangavstand. Trykk «Gjort» ved hvert stopp.
-- Oppdrag: små oppgaver ved kjente steder, sortert etter avstand.
-- Bytt mellom 2D og 3D (bygninger og terreng) med knappen på kartet.
+## Hva du kan gjøre
 
-På mobil ligger fanene nederst, på PC i en kolonne til venstre.
+| Fane | Hva den gjør |
+|---|---|
+| **Utforsk** | Se alle stedene på kartet med bilde. Søk eller filtrer på type, for eksempel park, museum eller lekeplass. |
+| **Min tur** | Svar på to spørsmål, så får dere en tur fra Torvet med så kort gåavstand som mulig. Trykk «Gjort» ved hvert stopp. |
+| **Oppdrag** | Små oppgaver ved kjente steder, med de nærmeste først. |
 
-## Kjøre lokalt
+Knappen på kartet bytter mellom vanlig kart og 3D med bygninger og terreng. På mobil ligger fanene nederst, og på PC til venstre.
 
-Krever Node 22 (se `.nvmrc`).
+## Hvorfor den er bygget sånn
+
+- **Bare ekte bilder.** Et sted kommer bare med hvis det finnes et ekte bilde av det på Wikimedia Commons. Jeg ville heller ha færre steder enn feil bilder.
+- **Passer for alle.** Stedene hentes fra OpenStreetMap, men bare fra kategorier som passer for barn. Severdigheter og turløyper har jeg valgt ut selv.
+- **Kort tur.** Appen prøver 60 ulike rekkefølger på stoppene og velger den korteste.
+- **Ingen API-nøkkel.** Alt bruker åpne tjenester, så det finnes ingen hemmeligheter i koden.
+
+## Kjør den selv
+
+Du trenger Node 22.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Appen kjører på http://localhost:5173. Andre kommandoer:
+Åpne http://localhost:5173.
 
-```bash
-npm run build
-npm run lint
-node scripts/hent-aktiviteter.mjs   # oppdater steder fra OpenStreetMap
-node scripts/hent-bilder.mjs        # oppdater bilder fra Wikimedia Commons
-```
-
-Ingen API-nøkkel trengs.
+| Kommando | Hva den gjør |
+|---|---|
+| `npm run build` | Bygger appen |
+| `npm run lint` | Sjekker koden |
+| `node scripts/hent-aktiviteter.mjs` | Henter steder på nytt fra OpenStreetMap |
+| `node scripts/hent-bilder.mjs` | Henter bilder på nytt fra Wikimedia Commons |
 
 ## Teknologi
 
-React, TypeScript, Vite, Material UI og MapLibre GL. Gangruter fra OSRM. Deployes til GitHub Pages med GitHub Actions ved push til `main`.
+React, TypeScript, Vite, Material UI og MapLibre. Gangrutene kommer fra OSRM. Appen legges ut på GitHub Pages hver gang noe pushes til `main`.
 
-Stedene hentes fra OpenStreetMap og lagres som JSON i `src/sample_data/`. Bare steder med et ekte bilde fra Wikimedia Commons tas med. Severdigheter og turløyper er lagt inn for hånd i `scripts/hand-plukket.json`. Turplanleggeren ligger i `src/utils/bane.ts`.
+## Status
+
+63 steder fordelt på 13 kategorier. Bygget og lint går gjennom uten feil.
 
 ## Kilder
 
-- Satellittbilder: © Esri, Maxar, Earthstar Geographics
-- Kartdata og steder: © OpenStreetMap-bidragsytere (ODbL), via Overpass og OpenFreeMap
-- Bilder: Wikimedia Commons, kreditert i appen
+- Satellittbilder: Esri, Maxar, Earthstar Geographics
+- Kart og steder: OpenStreetMap-bidragsytere (ODbL), via Overpass og OpenFreeMap
+- Bilder: Wikimedia Commons, med fotograf og lisens i appen
 - Terreng: Mapzen / AWS Terrain Tiles
-- Ruter: OSRM
+- Gangruter: OSRM
